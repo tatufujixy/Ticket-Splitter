@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 		    JTextField tex2 = new JTextField(20);
 		    
 	  public static void main(String args[]){
-	    Gui frame = new Gui("�o�H����");
+	    Gui frame = new Gui("経路探索");
 	    frame.setVisible(true);
 	  }
 
@@ -23,14 +23,14 @@ import java.awt.event.ActionEvent;
 	    setBounds(100, 100, 300, 300);
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-	    JLabel label1 = new JLabel("��ԉw");
-	    JLabel label2 = new JLabel("�~�ԉw");
+	    JLabel label1 = new JLabel("乗車駅");
+	    JLabel label2 = new JLabel("降車駅");
 	    
 
 	 	    
 	    JPanel p = new JPanel();
 	   
-	    JButton button = new JButton("���s");
+	    JButton button = new JButton("実行");
 	    
 	    
 	    p.add(label1);
