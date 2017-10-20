@@ -1,6 +1,9 @@
 package jp.ac.tus.ed.ticketsplitter;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 public class Database {
@@ -15,8 +18,24 @@ public class Database {
 	//・・・
 	
 	//初期化はstaticイニシャライザで
+	static Connection conn=null;
+	
+	static{
+		try {
+			Class.forName("org.sqlite.JDBC");
+			conn=DriverManager.getConnection("jdbc:sqlite:res/database.db");
+		} catch (ClassNotFoundException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		
+	}
 	
 	public static Station getStation(int id){
+			
 	//idを指定してStationインスタンスを返す
 	//idは、stationテーブルにおけるid,id_stationのどちらでも良い
 		return null;

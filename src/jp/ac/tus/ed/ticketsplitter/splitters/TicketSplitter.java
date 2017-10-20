@@ -17,4 +17,6 @@ public class TicketSplitter {
 	//FareCalculatorから呼ばれるかも
 		return null;
 	}
+	
+	
 }

@@ -7,6 +7,7 @@ public class Route {
 	//コンストラクタはTicketSplitter(、FareCalculator)で呼ばれる
 	
 	
+	
 	public List<Station> getStationsList(){
 	//乗車駅から降車駅までの駅のリスト
 		return null;
