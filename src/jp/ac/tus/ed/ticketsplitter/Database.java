@@ -57,11 +57,20 @@ public class Database {
 	}
 
 	public static Station getStation(int id){
-
 	//idを指定してStationインスタンスを返す
 	//idは、stationテーブルにおけるid,id_stationのどちらでも良い
+		try {
+			statement.setQueryTimeout(30);
+			String sql = "select * from station where id = id";
+			statement.executeUpdate(sql);
+			conn.commit();
+			statement.close();
+		} catch (SQLException e){
+			return null;
+		}
 		return null;
 	}
+
 	public static List<Station> getAllStations(){
 	//データベース内のすべての駅情報をリストで返す
 		return null;
