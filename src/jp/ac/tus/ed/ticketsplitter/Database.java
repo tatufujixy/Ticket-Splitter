@@ -1,9 +1,11 @@
 package jp.ac.tus.ed.ticketsplitter;
 
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class Database {
@@ -16,26 +18,44 @@ public class Database {
 	public static final int FARE_YAMANOTE=11;
 	public static final int FARE_SPECIFIC_TOKYO=12;//東京電車特定区間
 	//・・・
-	
+
 	//初期化はstaticイニシャライザで
 	static Connection conn=null;
-	
+	static Statement statement = null;
+
 	static{
 		try {
 			Class.forName("org.sqlite.JDBC");
+
 			conn=DriverManager.getConnection("jdbc:sqlite:res/database.db");
+			statement = conn.createStatement();
 		} catch (ClassNotFoundException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
+		} finally {
+			try {
+				if (statement != null) {
+					statement.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
-		
+
 	}
-	
+
 	public static Station getStation(int id){
-			
+
 	//idを指定してStationインスタンスを返す
 	//idは、stationテーブルにおけるid,id_stationのどちらでも良い
 		return null;
@@ -56,7 +76,7 @@ public class Database {
 	//運賃エリアareaの、距離distanceでの運賃を返す
 		return -1;
 	}
-	
-	
+
+
 	//特定区間運賃とかは中間発表後に実装すれば良いかと
 }
