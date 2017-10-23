@@ -1,6 +1,9 @@
 package jp.ac.tus.ed.ticketsplitter.splitters;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Collections;
 
 import jp.ac.tus.ed.ticketsplitter.Route;
 import jp.ac.tus.ed.ticketsplitter.Station;
@@ -22,10 +25,12 @@ public class TicketSplitter {
 	//ダイクストラ法により、start駅からdest駅までの経路を求める
 	//FareCalculatorから呼ばれるかも
 		
-		//最短距離未確定リスト
-		//確定済みリスト
-		
-		//destnode dist0
+		//最短距離未確定リスト unsettled 未確定の意
+		ArrayList<Node> unsettled = new ArrayList<Node>();
+		//確定済みリスト committed 確定済み
+		ArrayList<Node> committed = new ArrayList<Node>();
+		//destnode dist0	
+		 
 		//未確定リストにdist0を入れる
 		
 		
