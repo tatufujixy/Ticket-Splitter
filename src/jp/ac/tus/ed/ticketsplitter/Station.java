@@ -24,7 +24,7 @@ public class Station {
 	
 	//コンストラクタはDatabaseで呼ばれる
 	
-	
+	//test
 	public int getStationId(){
 	//駅ID。乗換可能駅であればその共通のID、すなわちDBのid_station
 		

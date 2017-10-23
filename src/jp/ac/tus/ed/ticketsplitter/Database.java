@@ -16,7 +16,9 @@ public class Database {
 	public static final int FARE_HONSYU_LOCAL=4;
 	//・・・
 	public static final int FARE_YAMANOTE=11;
-	public static final int FARE_SPECIFIC_TOKYO=12;//東京電車特定区間
+	public static final int FARE_OSAKA_KANJO=12;
+	public static final int FARE_SPECIFIC_TOKYO=13;//東京電車特定区間
+	public static final int FARE_SPECIFIC_OSAKA=13;//大阪電車特定区間
 	//・・・
 
 	//初期化はstaticイニシャライザで
