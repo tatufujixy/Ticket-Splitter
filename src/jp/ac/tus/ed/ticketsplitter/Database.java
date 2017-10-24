@@ -11,10 +11,10 @@ import java.util.List;
 
 public class Database {
 	//運賃エリア(TRUNK:幹線   LOCAL:地方交通線)
-	public static final int FARE_HOKKAIDO_TRUNK=1;
-	public static final int FARE_HOKKAIDO_LOCAL=2;
-	public static final int FARE_HONSYU_TRUNK=3;
-	public static final int FARE_HONSYU_LOCAL=4;
+	public static final int FARE_HOKKAIDO_TRUNK=1; // 北海道幹線
+	public static final int FARE_HOKKAIDO_LOCAL=2; // 北海道地方交通線
+	public static final int FARE_HONSYU_TRUNK=3; // 本州幹線
+	public static final int FARE_HONSYU_LOCAL=4; // 本州地方交通線
 	//・・・
 	public static final int FARE_YAMANOTE=11;
 	public static final int FARE_OSAKA_KANJO=12;
@@ -115,12 +115,12 @@ public class Database {
 		}
 		return sta;
 	}
-
+/*
 	public static List<Station> getAllStations(){
 	//データベース内のすべての駅情報をリストで返す
 		return null;
 	}
-	
+*/	
 	public static Station getStation(String name){
 	//駅名nameの駅のStationインスタンスを返す。なければnullを返す
 	//ほぼgetStation(int id)のコピー
@@ -128,7 +128,7 @@ public class Database {
 		
 		try {
 			statement.setQueryTimeout(30);
-			String sql = "select * from station where name = "+name;
+			String sql = "select * from station where name = "+name; // 文字列で＝は使える？
 			ResultSet rs=statement.executeQuery(sql);
 			
 			if(!rs.next()){//idをもつ駅が存在しない
@@ -137,7 +137,7 @@ public class Database {
 			if(rs.getInt("id_station")!=0){
 				//乗り換え可能な駅のとき
 				rs=statement.executeQuery("select * from station where name = "+name);
-			}
+			}   
 			rs.beforeFirst();
 			while(rs.next()){
 				int line=rs.getInt("line");
@@ -188,6 +188,23 @@ public class Database {
 	}
 	public static int getFare(int area, BigDecimal distance){
 	//運賃エリアareaの、距離distanceでの運賃を返す
+	//エリアの指定とdistanceの小数点以下を切り上げ
+	// BigDecimalの小数点以下切り上げの求め方
+	//select * from fare where min<=(distance整数値) and max<=(distance整数値) and (エリア指定)
+		switch(area){
+			case FARE_HOKKAIDO_TRUNK:
+				statement.executeQuery("select * from fare where min<=(distance整数値) and max<=(distance整数値) and (北海道幹線)")
+				break;
+			case FARE_HOKKAIDO_LOCAL:
+				
+				break;
+			case FARE_HONSYU_TRUNK:
+				
+				break;
+			case FARE_HONSYU_LOCAL:
+				break;
+		}
+		
 		return -1;
 	}
 
