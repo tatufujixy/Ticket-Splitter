@@ -33,7 +33,7 @@ public class FareCalculator {
 	}
 	
 	
-	public int calculate(Route r){
+	public Ticket calculate(Route r){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
 		RouteInformation ri=getInformation(r);
 		
@@ -88,7 +88,7 @@ public class FareCalculator {
 			
 		}
 		
-		return fare+ri.additionFare;
+		return new Ticket(r,fare+ri.additionFare);
 	}
 	
 	RouteInformation getInformation(Route r){
