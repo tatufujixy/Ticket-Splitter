@@ -29,7 +29,7 @@ public class Database {
 		try {
 			Class.forName("org.sqlite.JDBC");
 
-			conn=DriverManager.getConnection("jdbc:sqlite:res/database.db");
+			conn=DriverManager.getConnection("jdbc:sqlite::resource:"+Database.class.getClassLoader().getResource("res/database.db"));
 			statement = conn.createStatement();
 		} catch (ClassNotFoundException e) {
 			// TODO 自動生成された catch ブロック
@@ -37,7 +37,7 @@ public class Database {
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
-		} finally {
+		}/* finally {
 			try {
 				if (statement != null) {
 					statement.close();
@@ -52,7 +52,7 @@ public class Database {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 
 	}
 

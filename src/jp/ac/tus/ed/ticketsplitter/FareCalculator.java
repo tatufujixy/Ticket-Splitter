@@ -35,7 +35,7 @@ public class FareCalculator {
 	
 	public Ticket calculate(Route r){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
-		RouteInformation ri=getClassfier(r);
+		RouteInformation ri=getInformation(r);
 		
 		int fare=0;
 		if(ri.inYamanoteLine){
@@ -91,7 +91,7 @@ public class FareCalculator {
 		return new Ticket(r,fare+ri.additionFare);
 	}
 	
-	RouteInformation getClassfier(Route r){
+	RouteInformation getInformation(Route r){
 		
 		List<Station> stations=r.getStationsList();
 		List<Line> lines=r.getLinesList();
