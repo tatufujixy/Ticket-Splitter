@@ -21,6 +21,7 @@ public class Line { // JR各路線データのクラス
 	
 	public int getId(){
 	//路線IDを返す
+		
 		return id;
 	}
 	public String getName(){

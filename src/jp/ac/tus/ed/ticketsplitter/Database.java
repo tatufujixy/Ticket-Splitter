@@ -185,8 +185,27 @@ public class Database {
 	
 	public static Line getLine(int id){
 	//路線IDがidのLineを返す
-		return null;
+		Line line = new Line();
+		String sql = null;
+		int lineId = 0;
+		ResultSet rs;
+		
+		sql = "select from line where id = " + id;
+		try {
+			rs=statement.executeQuery(sql);
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		
+		if(!rs.next()){ //idを持つlineが存在しないとき
+			return null;
+		}
+		
 	}
+		
+	
+	
 	public static int getFare(int area, BigDecimal distance){
 	//運賃エリアareaの、距離distanceでの運賃を返す
 	//エリアの指定とdistanceの小数点以下を切り上げ
