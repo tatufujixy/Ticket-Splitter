@@ -45,23 +45,27 @@ public class TicketSplitter {
 		 //最短距離未確定リストをコスト順に並べる
 		 //ListComparatorクラスの条件に従いソート
 		 Collections.sort(unsettled,new ListComparator());
-		//未確定リストから、コストの最低のもの(つまり最初のもの)を確定済みリストに移動、その隣の駅を取り出す
+		//未確定リストから、距離の最低のもの(つまり最初のもの)を確定済みリストに移動、その隣の駅を取り出す
 		//取り出した駅(unsettled.get(0))が確定済みリストにあれば無視、未確定リストにあれば、距離を計算しなおし、短ければ距離・直前の駅を更新
 		 processingStaNode = unsettled.get(0);
-		 if(committed.indexOf(unsettled.get(0))==-1){
+		 if(committed.indexOf(unsettled.remove(0))==-1){
 			 //確定済みリストにない場合の処理
+			 //処理する駅を取り出す
 			 processingSta = processingStaNode.getSta();
+			 //その駅の路線idをとる
 			 processingstationslineid = processingSta.getLineId();
+			 //その駅のマップを取り出す。取り出した路線idをもとに隣接駅をマップから取り出す。
 			 processingstationsmap = processingSta.nextStationId();//戻り値がマップの形
 			 while(!(processingstationslineid.isEmpty())){
-				 //隣接駅をすべて抜き出しノードにする。
+				 //ある路線の、隣接駅をすべて抜き出しノードにする。取り出した路線idは消す。
 				 processinglineid = processingstationslineid.get(0);
 				 processingstationslineid.remove(0);
+				 //隣接駅を路線idをもとにマップから取り出す。当然2つ要素を持つ。
 				 nextstations = processingstationsmap.get(processinglineid);
 				 while(!(nextstations.isEmpty())){
 					 //駅を作成、それをもとにノードを作成し、unsettledに入れるかどうか確認後入れる。
 					Database.getStation(nextstations.get(0));
-				 
+					nextstations.remove(0);
 				 }
 				 
 			 }
