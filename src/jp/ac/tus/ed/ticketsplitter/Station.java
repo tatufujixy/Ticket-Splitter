@@ -23,7 +23,6 @@ public class Station {
 	
 	//コンストラクタはDatabaseで呼ばれる
 	
-	//test
 	public int getStationId(){
 	//駅ID。乗換可能駅であればその共通のID、すなわちDBのid_station
 		return -1;
@@ -33,7 +32,7 @@ public class Station {
 	//単独駅では必ずgetStationId()と同じ値になる
 		return -1;
 	}
-	public Map<Integer,Integer> nextStationId(){
+	public Map<Integer,List<Integer>> nextStationId(){
 	//隣の駅への路線idと駅idの組
 	//次の駅に行くのに経由する路線idをKeyに、次の駅の駅idをValueにして入れている。すなわち、Map<路線id,駅id>
 		return null;

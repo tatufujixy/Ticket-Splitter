@@ -5,7 +5,6 @@ public class Ticket {
 	private int fare;
 	
 	//コンストラクタはFareCalculatorで呼ばれる
-	
 	public Ticket(Route r, int fare){
 		route=r;
 		this.fare=fare;
