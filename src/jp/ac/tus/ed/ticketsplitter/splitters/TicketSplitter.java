@@ -116,6 +116,7 @@ public class TicketSplitter {
 //この下がwhileの}	
 		}
 
+		
 		//処理が終わり次第 返し値Routeクラスのインスタンス？
 		return null;
 	
