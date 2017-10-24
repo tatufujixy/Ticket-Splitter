@@ -123,6 +123,7 @@ public class Database {
 	
 	public static Station getStation(String name){
 	//駅名nameの駅のStationインスタンスを返す。なければnullを返す
+	//ほぼgetStation(int id)のコピー
 		Station sta = new Station();
 		
 		try {
