@@ -29,7 +29,7 @@ public class Database {
 	static{
 		try {
 			Class.forName("org.sqlite.JDBC");
-			System.out.println(Database.class.getClassLoader().getResource("res/database.db"));
+			//System.out.println(Database.class.getClassLoader().getResource("res/database.db"));
 			conn=DriverManager.getConnection("jdbc:sqlite:"+"res/database.db");
 			statement = conn.createStatement();
 		} catch (ClassNotFoundException e) {
@@ -76,7 +76,6 @@ public class Database {
 				rs=statement.executeQuery("select * from station where id_station="+id);
 				rs.next();
 			}
-			//rs.beforeFirst();
 			do{
 				int line=rs.getInt("line");
 				
@@ -137,12 +136,11 @@ public class Database {
 			if(!rs.next()){//idをもつ駅が存在しない
 				return null;
 			}
-			if(rs.getInt("id_station")!=0){
+			/*if(rs.getInt("id_station")!=0){
 				//乗り換え可能な駅のとき
 				rs=statement.executeQuery("select * from station where name = "+name);
-			}   
-			rs.beforeFirst();
-			while(rs.next()){
+			}*/
+			do{
 				int line=rs.getInt("line");
 				
 				if(rs.getInt("id_station")==0){
@@ -176,7 +174,7 @@ public class Database {
 				}/*他の条件も後で追加*/
 				
 				sta.setDistance(line, new BigDecimal(rs.getString("distance")));
-			}
+			}while(rs.next());
 		} catch (SQLException e){
 			return null;
 		}
@@ -196,7 +194,7 @@ public class Database {
 	//select * from fare where min<=(distance整数値) and max<=(distance整数値) and (エリア指定)
 		switch(area){
 			case FARE_HOKKAIDO_TRUNK:
-				statement.executeQuery("select * from fare where min<=(distance整数値) and max<=(distance整数値) and (北海道幹線)")
+				statement.executeQuery("select * from fare where min<=(distance整数値) and max<=(distance整数値) and (北海道幹線)");
 				break;
 			case FARE_HOKKAIDO_LOCAL:
 				
@@ -213,4 +211,8 @@ public class Database {
 
 
 	//特定区間運賃とかは中間発表後に実装すれば良いかと
+	/*
+	public static void main(String args[]){
+		System.out.println(getStation(12).getName());;
+	}*/
 }
