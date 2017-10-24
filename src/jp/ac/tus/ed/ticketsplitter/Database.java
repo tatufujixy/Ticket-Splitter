@@ -29,8 +29,8 @@ public class Database {
 	static{
 		try {
 			Class.forName("org.sqlite.JDBC");
-
-			conn=DriverManager.getConnection("jdbc:sqlite::resource:"+Database.class.getClassLoader().getResource("res/database.db"));
+			System.out.println(Database.class.getClassLoader().getResource("res/database.db"));
+			conn=DriverManager.getConnection("jdbc:sqlite:"+"res/database.db");
 			statement = conn.createStatement();
 		} catch (ClassNotFoundException e) {
 			// TODO 自動生成された catch ブロック
@@ -64,18 +64,20 @@ public class Database {
 		
 		try {
 			statement.setQueryTimeout(30);
-			String sql = "select * from station where id = "+id;
+			String sql = "select * from station where id="+id;
 			ResultSet rs=statement.executeQuery(sql);
 			
 			if(!rs.next()){//idをもつ駅が存在しない
+				System.out.println("not exist");
 				return null;
 			}
 			if(rs.getInt("id_station")!=0){
 				//乗り換え可能な駅のとき
-				rs=statement.executeQuery("select * from station where id_station = "+id);
+				rs=statement.executeQuery("select * from station where id_station="+id);
+				rs.next();
 			}
-			rs.beforeFirst();
-			while(rs.next()){
+			//rs.beforeFirst();
+			do{
 				int line=rs.getInt("line");
 				
 				if(rs.getInt("id_station")==0){
@@ -109,8 +111,9 @@ public class Database {
 				}/*他の条件も後で追加*/
 				
 				sta.setDistance(line, new BigDecimal(rs.getString("distance")));
-			}
+			}while(rs.next());
 		} catch (SQLException e){
+			e.printStackTrace();
 			return null;
 		}
 		return sta;
