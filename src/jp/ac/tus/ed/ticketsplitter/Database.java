@@ -190,23 +190,38 @@ public class Database {
 	public static int getFare(int area, BigDecimal distance){
 	//運賃エリアareaの、距離distanceでの運賃を返す
 	//エリアの指定とdistanceの小数点以下を切り上げ
-	// BigDecimalの小数点以下切り上げの求め方
+		BigDecimal bd = distance.setScale(0, BigDecimal.ROUND_UP); // distanceの小数点以下を切り上げ
+		int fare = 0;
+		String sql = null;
 	//select * from fare where min<=(distance整数値) and max<=(distance整数値) and (エリア指定)
 		switch(area){
 			case FARE_HOKKAIDO_TRUNK:
-				statement.executeQuery("select * from fare where min<=(distance整数値) and max<=(distance整数値) and (北海道幹線)");
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (北海道幹線)";
 				break;
 			case FARE_HOKKAIDO_LOCAL:
-				
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (北海道地方交通線)";
 				break;
 			case FARE_HONSYU_TRUNK:
-				
+				sql = "select * from fare where min<=" + bd +" and max>=" + bd + " and (本州幹線)";
 				break;
 			case FARE_HONSYU_LOCAL:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (本州地方交通線)";
 				break;
 		}
 		
-		return -1;
+		try {
+			ResultSet rs = statement.executeQuery(sql);
+			fare = rs.getInt("fare");
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
+		return fare;
 	}
 
 
