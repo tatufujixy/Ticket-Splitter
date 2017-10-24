@@ -50,10 +50,8 @@ public class Station {
 	}
 	public int getStationId(){
 	//駅ID。乗換可能駅であればその共通のID、すなわちDBのid_station
-<<<<<<< HEAD
 		
 		return -1;
-=======
 		return id;
 	}
 	void setStationIdOfLine(int line,int station){
