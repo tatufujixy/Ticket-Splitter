@@ -120,10 +120,67 @@ public class Database {
 	//データベース内のすべての駅情報をリストで返す
 		return null;
 	}
+	
 	public static Station getStation(String name){
 	//駅名nameの駅のStationインスタンスを返す。なければnullを返す
-		return null;
+		Station sta = new Station();
+		
+		try {
+			statement.setQueryTimeout(30);
+			String sql = "select * from station where name = "+name;
+			ResultSet rs=statement.executeQuery(sql);
+			
+			if(!rs.next()){//idをもつ駅が存在しない
+				return null;
+			}
+			if(rs.getInt("id_station")!=0){
+				//乗り換え可能な駅のとき
+				rs=statement.executeQuery("select * from station where name = "+name);
+			}
+			rs.beforeFirst();
+			while(rs.next()){
+				int line=rs.getInt("line");
+				
+				if(rs.getInt("id_station")==0){
+					sta.setStationId(rs.getInt("id"));
+				}else{
+					sta.setStationId(rs.getInt("id_station"));
+				}
+			
+				sta.setStationIdOfLine(line,rs.getInt("id"));
+				sta.setName(rs.getString("name"));
+				sta.addNextStationId(line, rs.getInt("prev_station"));
+				sta.addNextStationId(line, rs.getInt("next_station"));
+				sta.setSpecificWardsAndCities(rs.getInt("wards_and_cities"));
+				sta.setIsInYamanoteLine(rs.getBoolean("yamanote"));
+				sta.setInOsakaKanjoLine(rs.getBoolean("osaka_kanjo"));
+				
+				String specificArea=rs.getString("specific_area");
+				if(specificArea==null){
+				}else if(specificArea.equals("東京")){
+					sta.setSpecificArea(Station.SPECIFIC_TOKYO);
+				}else{
+					sta.setSpecificArea(Station.SPECIFIC_OSAKA);
+				}
+				
+				String suburbArea=rs.getString("suburb_area");
+				if(suburbArea==null){
+				}else if(suburbArea.equals("東京")){
+					sta.setSuburbArea(Station.SUBURB_TOKYO);
+				}else if(suburbArea.equals("大阪")){
+					sta.setSuburbArea(Station.SUBURB_OSAKA);
+				}/*他の条件も後で追加*/
+				
+				sta.setDistance(line, new BigDecimal(rs.getString("distance")));
+			}
+		} catch (SQLException e){
+			return null;
+		}
+		return sta;
 	}
+		
+		
+	
 	public static Line getLine(int id){
 	//路線IDがidのLineを返す
 		return null;
