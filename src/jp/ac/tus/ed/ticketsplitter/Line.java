@@ -1,6 +1,6 @@
 package jp.ac.tus.ed.ticketsplitter;
 
-public class Line {
+public class Line { // JR各路線データのクラス
 	//地域(運賃の違いのため)
 	public static final int AREA_HONSYU=1;
 	public static final int AREA_HOKKAIDO=2;
@@ -21,6 +21,7 @@ public class Line {
 	
 	public int getId(){
 	//路線IDを返す
+		
 		return id;
 	}
 	public String getName(){

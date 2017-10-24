@@ -119,4 +119,13 @@ public class Station {
 	//この駅が属する路線idのリストを返す
 		return new ArrayList<Integer>(stationIdOfLine.keySet());
 	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(!(o instanceof Station)){
+			return false;
+		}
+		Station sta=(Station)o;
+		return sta.id==this.id;
+	}
 }

@@ -11,10 +11,10 @@ import java.util.List;
 
 public class Database {
 	//運賃エリア(TRUNK:幹線   LOCAL:地方交通線)
-	public static final int FARE_HOKKAIDO_TRUNK=1;
-	public static final int FARE_HOKKAIDO_LOCAL=2;
-	public static final int FARE_HONSYU_TRUNK=3;
-	public static final int FARE_HONSYU_LOCAL=4;
+	public static final int FARE_HOKKAIDO_TRUNK=1; // 北海道幹線
+	public static final int FARE_HOKKAIDO_LOCAL=2; // 北海道地方交通線
+	public static final int FARE_HONSYU_TRUNK=3; // 本州幹線
+	public static final int FARE_HONSYU_LOCAL=4; // 本州地方交通線
 	//・・・
 	public static final int FARE_YAMANOTE=11;
 	public static final int FARE_OSAKA_KANJO=12;
@@ -29,8 +29,8 @@ public class Database {
 	static{
 		try {
 			Class.forName("org.sqlite.JDBC");
-
-			conn=DriverManager.getConnection("jdbc:sqlite::resource:"+Database.class.getClassLoader().getResource("res/database.db"));
+			//System.out.println(Database.class.getClassLoader().getResource("res/database.db"));
+			conn=DriverManager.getConnection("jdbc:sqlite:"+"res/database.db");
 			statement = conn.createStatement();
 		} catch (ClassNotFoundException e) {
 			// TODO 自動生成された catch ブロック
@@ -64,18 +64,19 @@ public class Database {
 		
 		try {
 			statement.setQueryTimeout(30);
-			String sql = "select * from station where id = "+id;
+			String sql = "select * from station where id="+id;
 			ResultSet rs=statement.executeQuery(sql);
 			
 			if(!rs.next()){//idをもつ駅が存在しない
+				System.out.println("not exist");
 				return null;
 			}
 			if(rs.getInt("id_station")!=0){
 				//乗り換え可能な駅のとき
-				rs=statement.executeQuery("select * from station where id_station = "+id);
+				rs=statement.executeQuery("select * from station where id_station="+id);
+				rs.next();
 			}
-			rs.beforeFirst();
-			while(rs.next()){
+			do{
 				int line=rs.getInt("line");
 				
 				if(rs.getInt("id_station")==0){
@@ -109,18 +110,19 @@ public class Database {
 				}/*他の条件も後で追加*/
 				
 				sta.setDistance(line, new BigDecimal(rs.getString("distance")));
-			}
+			}while(rs.next());
 		} catch (SQLException e){
+			e.printStackTrace();
 			return null;
 		}
 		return sta;
 	}
-
+/*
 	public static List<Station> getAllStations(){
 	//データベース内のすべての駅情報をリストで返す
 		return null;
 	}
-	
+*/	
 	public static Station getStation(String name){
 	//駅名nameの駅のStationインスタンスを返す。なければnullを返す
 	//ほぼgetStation(int id)のコピー
@@ -128,18 +130,17 @@ public class Database {
 		
 		try {
 			statement.setQueryTimeout(30);
-			String sql = "select * from station where name = "+name;
+			String sql = "select * from station where name = "+name; // 文字列で＝は使える？
 			ResultSet rs=statement.executeQuery(sql);
 			
 			if(!rs.next()){//idをもつ駅が存在しない
 				return null;
 			}
-			if(rs.getInt("id_station")!=0){
+			/*if(rs.getInt("id_station")!=0){
 				//乗り換え可能な駅のとき
 				rs=statement.executeQuery("select * from station where name = "+name);
-			}
-			rs.beforeFirst();
-			while(rs.next()){
+			}*/
+			do{
 				int line=rs.getInt("line");
 				
 				if(rs.getInt("id_station")==0){
@@ -173,7 +174,7 @@ public class Database {
 				}/*他の条件も後で追加*/
 				
 				sta.setDistance(line, new BigDecimal(rs.getString("distance")));
-			}
+			}while(rs.next());
 		} catch (SQLException e){
 			return null;
 		}
@@ -184,13 +185,68 @@ public class Database {
 	
 	public static Line getLine(int id){
 	//路線IDがidのLineを返す
-		return null;
+		Line line = new Line();
+		String sql = null;
+		int lineId = 0;
+		ResultSet rs;
+		
+		sql = "select from line where id = " + id;
+		try {
+			rs=statement.executeQuery(sql);
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		
+		if(!rs.next()){ //idを持つlineが存在しないとき
+			return null;
+		}
+		
 	}
+		
+	
+	
 	public static int getFare(int area, BigDecimal distance){
 	//運賃エリアareaの、距離distanceでの運賃を返す
-		return -1;
+	//エリアの指定とdistanceの小数点以下を切り上げ
+		BigDecimal bd = distance.setScale(0, BigDecimal.ROUND_UP); // distanceの小数点以下を切り上げ
+		int fare = 0;
+		String sql = null;
+	//select * from fare where min<=(distance整数値) and max<=(distance整数値) and (エリア指定)
+		switch(area){
+			case FARE_HOKKAIDO_TRUNK:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (北海道幹線)";
+				break;
+			case FARE_HOKKAIDO_LOCAL:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (北海道地方交通線)";
+				break;
+			case FARE_HONSYU_TRUNK:
+				sql = "select * from fare where min<=" + bd +" and max>=" + bd + " and (本州幹線)";
+				break;
+			case FARE_HONSYU_LOCAL:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (本州地方交通線)";
+				break;
+		}
+		
+		try {
+			ResultSet rs = statement.executeQuery(sql);
+			fare = rs.getInt("fare");
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
+		return fare;
 	}
 
 
 	//特定区間運賃とかは中間発表後に実装すれば良いかと
+	/*
+	public static void main(String args[]){
+		System.out.println(getStation(12).getName());;
+	}*/
 }
