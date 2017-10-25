@@ -221,16 +221,16 @@ public class Database {
 	//select * from fare where min<=(distance整数値) and max<=(distance整数値) and (エリア指定)
 		switch(area){
 			case FARE_HOKKAIDO_TRUNK:
-				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (北海道幹線)";
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='北海道幹線'";
 				break;
 			case FARE_HOKKAIDO_LOCAL:
-				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (北海道地方交通線)";
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='北海道地方交通線'";
 				break;
 			case FARE_HONSYU_TRUNK:
-				sql = "select * from fare where min<=" + bd +" and max>=" + bd + " and (本州幹線)";
+				sql = "select * from fare where min<=" + bd +" and max>=" + bd + " and area='本州幹線'";
 				break;
 			case FARE_HONSYU_LOCAL:
-				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (本州地方交通線)";
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='本州地方交通線'";
 				break;
 		}
 		
