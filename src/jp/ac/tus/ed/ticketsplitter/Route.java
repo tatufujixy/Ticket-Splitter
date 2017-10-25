@@ -18,10 +18,9 @@ public class Route {
 		for(int i=1;i<stationList.size();i++){
 			BigDecimal between=stationList.get(i-1).getDistance(lineList.get(i-1).getId())
 					.subtract(stationList.get(i).getDistance(lineList.get(i-1).getId())).abs();
-			distance.add(between);
+			distance=distance.add(between);
 		}
 	}
-	
 	public Route(Station start){
 		stationList.add(start);
 	}
@@ -50,6 +49,13 @@ public class Route {
 	
 	*/
 	
+	public String toString(){
+		String str="";
+		for(String s : via()){
+			str+=s+" ";
+		}
+		return str;
+	}
 	
 	public BigDecimal getDistance(){
 	//この経路の営業キロ

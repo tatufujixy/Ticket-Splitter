@@ -60,7 +60,7 @@ public class TicketSplitter {
 		ArrayList<StaNode> committed = new ArrayList<StaNode>();
 		//destnode dist0	
 		//未確定リストにdist0を入れる
-		 unsettled.add(new StaNode(dest,new BigDecimal("0,0"),null,null));
+		 unsettled.add(new StaNode(dest,new BigDecimal("0.0"),null,null));
 		
 		 //ここから下をstart StaNodeが出るまでループ
 		while(endprocess){

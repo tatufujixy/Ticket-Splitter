@@ -196,7 +196,7 @@ public class Database {
 		String sql = null;
 		ResultSet rs;
 		
-		sql = "select from line where id = " + id;
+		sql = "select * from line where id = " + id;
 		try {
 			rs=statement.executeQuery(sql);
 			if(rs.next()){ //idを持つlineが存在しないとき
@@ -219,6 +219,8 @@ public class Database {
 	public static int getFare(int area, BigDecimal distance){
 	//運賃エリアareaの、距離distanceでの運賃を返す
 	//エリアの指定とdistanceの小数点以下を切り上げ
+		//System.out.println("getFare : "+area+" "+distance.toPlainString());
+		
 		BigDecimal bd = distance.setScale(0, BigDecimal.ROUND_UP); // distanceの小数点以下を切り上げ
 		int fare = 0;
 		String sql = null;
@@ -236,11 +238,17 @@ public class Database {
 			case FARE_HONSYU_LOCAL:
 				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='本州地方交通線'";
 				break;
+			case FARE_SPECIFIC_TOKYO:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='東京電車特定区間'";
+				break;
 		}
 		
 		try {
 			ResultSet rs = statement.executeQuery(sql);
-			fare = rs.getInt("fare");
+			if(rs.next()){
+				fare = rs.getInt("fare");
+			}
+			
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -263,13 +271,13 @@ public class Database {
 		
 		Station start=null;
 		while(start==null){
-			System.out.print("乗車駅を入力:");
+			System.out.println("乗車駅を入力:");
 			String str=in.readLine();
 			start=Database.getStation(str);
 		}
 		Station dest=null;
 		while(dest==null){
-			System.out.print("降車駅を入力:");
+			System.out.println("降車駅を入力:");
 			String str=in.readLine();
 			dest=Database.getStation(str);
 		}
