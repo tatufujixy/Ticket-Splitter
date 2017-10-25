@@ -35,7 +35,7 @@ public class FareCalculator {
 	
 	public Ticket calculate(Route r){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
-		//System.out.println(r.toString());
+		System.out.println(r.getDistance());
 		
 		RouteInformation ri=getInformation(r);
 		
@@ -73,9 +73,9 @@ public class FareCalculator {
 				if(ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)!=0){
 					fare=Database.getFare(Database.FARE_HOKKAIDO_TRUNK, ri.areaDistance.get(Line.AREA_HOKKAIDO));
 				}else if(ri.areaDistance.get(Line.AREA_HONSYU).compareTo(BigDecimal.ZERO)!=0){
-					fare=Database.getFare(Database.FARE_HONSYU_TRUNK, ri.areaDistance.get(Line.AREA_HOKKAIDO));
+					fare=Database.getFare(Database.FARE_HONSYU_TRUNK, ri.areaDistance.get(Line.AREA_HONSYU));
 				}/*else{//!!!!!!!!!!!!!ここはあとで実装!!!!!!!!!!!!!
-					fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK, ri.areaDistance.get(Line.AREA_HOKKAIDO));
+					fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK, ri.areaDistance.get(Line.));
 				}*/
 			}else{
 				//経路が地方交通線のみ
@@ -132,7 +132,7 @@ public class FareCalculator {
 			
 			//各エリアの距離を更新
 			ri.areaDistance.put(l.getArea(),ri.areaDistance.get(l.getArea()).add(distance));
-			
+			//System.out.println(ri.areaDistance.get(l.getArea()));
 		}
 		
 		return ri;

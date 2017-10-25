@@ -204,14 +204,15 @@ public class Database {
 					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HONSYU);
 				}else if(rs.getString("area").equals("北海道")){
 					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HOKKAIDO);
-				}else if(rs.getString("area").equals("四国九州")){}
+				}else if(rs.getString("area").equals("四国九州")){
 					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_SIKOKU_KYUSYU);
 				}
+			}
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		return null;	
+		return null;
 	}
 		
 	
@@ -242,11 +243,13 @@ public class Database {
 				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='東京電車特定区間'";
 				break;
 		}
-		
+		//System.out.println(sql);
 		try {
 			ResultSet rs = statement.executeQuery(sql);
 			if(rs.next()){
 				fare = rs.getInt("fare");
+			}else{
+				System.out.println("運賃が見つからない");
 			}
 			
 		} catch (SQLException e) {

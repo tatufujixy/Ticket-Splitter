@@ -1,12 +1,11 @@
 package jp.ac.tus.ed.ticketsplitter.splitters;
 
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Collections;
 import java.util.Comparator;
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import jp.ac.tus.ed.ticketsplitter.Database;
 import jp.ac.tus.ed.ticketsplitter.FareCalculator;
@@ -129,9 +128,9 @@ public class TicketSplitter {
 					}else{
 						unsettled.add(alreadynode);
 						}
-					}
+					}else{
 				//未確定、確定、startnodeの条件に合わない場合は単に未確定リストに追加。
-					unsettled.add(newnode);
+					unsettled.add(newnode);}
 				}
 		 	
 			}
