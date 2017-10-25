@@ -15,7 +15,7 @@ public class Route {
 		stationList.add(start);
 	}
 	
-	void addRoute(Line line,Station sta){
+	public void addRoute(Line line,Station sta){
 		stationList.add(sta);
 		lineList.add(line);
 		
