@@ -11,7 +11,7 @@ public class Route {
 	private BigDecimal distance=BigDecimal.ZERO;
 	
 	//コンストラクタはTicketSplitter(、FareCalculator)で呼ばれる
-	Route(Station start){
+	public Route(Station start){
 		stationList.add(start);
 	}
 	

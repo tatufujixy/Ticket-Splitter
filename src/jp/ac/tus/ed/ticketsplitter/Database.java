@@ -1,6 +1,9 @@
 package jp.ac.tus.ed.ticketsplitter;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+
+import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitter;
 
 public class Database {
 	//運賃エリア(TRUNK:幹線   LOCAL:地方交通線)
@@ -132,7 +137,7 @@ public class Database {
 		
 		try {
 			statement.setQueryTimeout(30);
-			String sql = "select * from station where name = "+name; // 文字列で＝は使える？
+			String sql = "select * from station where name = '"+name+"'"; // 文字列で＝は使える？
 			ResultSet rs=statement.executeQuery(sql);
 			
 			if(!rs.next()){//idをもつ駅が存在しない
@@ -178,6 +183,7 @@ public class Database {
 				sta.setDistance(line, new BigDecimal(rs.getString("distance")));
 			}while(rs.next());
 		} catch (SQLException e){
+			e.printStackTrace();
 			return null;
 		}
 		return sta;
@@ -250,7 +256,34 @@ public class Database {
 
 	//特定区間運賃とかは中間発表後に実装すれば良いかと
 	
-	public static void main(String args[]){
-		System.out.println(getFare(Database.FARE_HONSYU_TRUNK,new BigDecimal("10.1")));;
+	public static void main(String args[]) throws IOException{
+		//System.out.println(getStation("柏").getStationId());
+		//
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		
+		Station start=null;
+		while(start==null){
+			System.out.print("乗車駅を入力:");
+			String str=in.readLine();
+			start=Database.getStation(str);
+		}
+		Station dest=null;
+		while(dest==null){
+			System.out.print("降車駅を入力:");
+			String str=in.readLine();
+			dest=Database.getStation(str);
+		}
+		
+		List<Ticket> list=TicketSplitter.getOptimizedTickets(start, dest);
+		
+		for(Ticket t:list){
+			Route r=t.getRoute();
+			System.out.println("運賃:"+t.getFare()+"円");
+			System.out.print("経路 : ");
+			for(String str : r.via()){
+				System.out.print(str+"  ");
+			}
+		}
+		
 	}
 }
