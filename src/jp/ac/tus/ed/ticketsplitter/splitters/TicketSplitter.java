@@ -30,7 +30,7 @@ public class TicketSplitter {
 		StaNode processingStaNode;
 		Station processingSta;
 		List<Integer> processingstations_lineids;
-		int processing_lineid;
+		//int processing_lineid;
 		Map<Integer,List<Integer>> processingstations_map;
 		List<Integer> nextstations;
 		//処理中の駅
@@ -61,61 +61,64 @@ public class TicketSplitter {
 		 Collections.sort(unsettled,new ListComparator());
 		//未確定リストから、距離の最低のもの(つまり最初のもの)を確定済みリストに移動、その隣の駅を取り出す
 		//取り出した駅(unsettled.get(0))が確定済みリストにあれば無視、未確定リストにあれば、距離を計算しなおし、短ければ距離・直前の駅を更新
-		 processingStaNode = unsettled.get(0);
-		 if(committed.indexOf(unsettled.remove(0))==-1){
-			 //確定済みリストにない場合の処理（入れるリスト分けではじいてるからある場合はあり得ないはず）
-			 //処理する駅を取り出す
-			 processingSta = processingStaNode.getSta();
-			 //その駅の路線idをとる
-			 processingstations_lineids = processingSta.getLineId();
-			 //その駅のマップを取り出す。取り出した路線idをもとに隣接駅をマップから取り出す。
-			 processingstations_map = processingSta.nextStationId();//戻り値がマップの形
-			 
-			 while(!(processingstations_lineids.isEmpty())){
-				 //ある路線の、隣接駅をすべて抜き出しノードにする。取り出した路線idは消す。
-				 processing_lineid = processingstations_lineids.get(0);
-				 processingstations_lineids.remove(0);
-				 //隣接駅を路線idをもとにマップから取り出す。当然2つ要素を持つintegerのリスト。
-				 //nextstationsは両隣の駅のidを格納しているリスト。
-				 nextstations = processingstations_map.get(processing_lineid);
-				 while(!(nextstations.isEmpty())){
-					 //駅を作成、それをもとにノードを作成し、unsettledに入れるかどうか確認後入れる。
-					newstation = Database.getStation(nextstations.get(0));
-					nextstations.remove(0);
-					//駅間の距離を算出し絶対値をつける
-					betweensta = ((processingStaNode.getSta()).getDistance(processing_lineid)).subtract(newstation.getDistance(processing_lineid));
-					absbetween = betweensta.abs();
-					newnode = new StaNode(newstation,absbetween.add(processingStaNode.getdist()),processingStaNode);
-					//新しく作ったStaNodeがstart、未確定内、確定内にあるか確認。
-					if(!(committed.indexOf(newnode)==-1)){
-						//最短経路が確定しているリスト内にあったならばこのノードは破棄。なにもしない。
-					}else if(newstation.getStationId() == startid){
-						//start stationと一致しているならば処理を終了
-						//求めたい距離はstartのstationに一致したノードを求めたStaNodeに書いてあるdistと、
-						//そこからstartまでの距離をたしたものなので
-						startdest = (absbetween).add(processingStaNode.getdist());
-						//経路はbackがnullになるまでnodeを追えばわかる。未実装
-						
-						endprocess = false;
-						
-					}else if(!(unsettled.indexOf(newnode)==-1)){
-						//未確定リストにあったならば距離を確認。更新するか否か
-						StaNode alreadynode = unsettled.remove(unsettled.indexOf(newnode)); 
-						if((alreadynode.getdist()).compareTo(newnode.getdist()) > 0){
-							// alreadyのほうが大きいならばnewnodeを格納、そうでないならalreadynodeを再格納。
-							unsettled.add(newnode);
-						}else{
-							unsettled.add(alreadynode);
-							}
-						}
-					//未確定、確定、startnodeの条件に合わない場合は単に未確定リストに追加。
+		 processingStaNode = unsettled.remove(0);
+		 committed.add(processingStaNode);
+		 //処理する駅を取り出す
+		 processingSta = processingStaNode.getSta();
+		 //その駅の路線idをとる
+		 processingstations_lineids = processingSta.getLineId();
+		 //その駅のマップを取り出す。取り出した路線idをもとに隣接駅をマップから取り出す。
+		 processingstations_map = processingSta.nextStationId();//戻り値がマップの形
+		 
+		for(int processing_lineid : processingstations_lineids){
+			 //ある路線の、隣接駅をすべて抜き出しノードにする。取り出した路線idは消す。
+			
+			 //processing_lineid = processingstations_lineids.get(0);
+			 //processingstations_lineids.remove(0);
+			
+			 //隣接駅を路線idをもとにマップから取り出す。当然2つ要素を持つintegerのリスト。
+			 //nextstationsは両隣の駅のidを格納しているリスト。
+			 nextstations = processingstations_map.get(processing_lineid);
+			 for(int newStationId : nextstations){
+				 //駅を作成、それをもとにノードを作成し、unsettledに入れるかどうか確認後入れる。
+				newstation = Database.getStation(newStationId);
+				//nextstations.remove(0);
+				//駅間の距離を算出し絶対値をつける
+				betweensta = ((processingStaNode.getSta()).getDistance(processing_lineid)).subtract(newstation.getDistance(processing_lineid));
+				absbetween = betweensta.abs();
+				newnode = new StaNode(newstation,absbetween.add(processingStaNode.getdist()),processingStaNode);
+				//新しく作ったStaNodeがstart、未確定内、確定内にあるか確認。
+				if(!(committed.indexOf(newnode)==-1)){
+					//最短経路が確定しているリスト内にあったならばこのノードは破棄。なにもしない。
+				}else if(newstation.getStationId() == startid){
+					//start stationと一致しているならば処理を終了
+					//求めたい距離はstartのstationに一致したノードを求めたStaNodeに書いてあるdistと、
+					//そこからstartまでの距離をたしたものなので
+					startdest = (absbetween).add(processingStaNode.getdist());
+					//経路はbackがnullになるまでnodeを追えばわかる。未実装
+					
+					endprocess = false;
+					
+				}else if(!(unsettled.indexOf(newnode)==-1)){
+					//未確定リストにあったならば距離を確認。更新するか否か
+					StaNode alreadynode = unsettled.remove(unsettled.indexOf(newnode)); 
+					if((alreadynode.getdist()).compareTo(newnode.getdist()) > 0){
+						// alreadyのほうが大きいならばnewnodeを格納、そうでないならalreadynodeを再格納。
 						unsettled.add(newnode);
+					}else{
+						unsettled.add(alreadynode);
+						}
 					}
-			 }	
-		 }
+				//未確定、確定、startnodeの条件に合わない場合は単に未確定リストに追加。
+					unsettled.add(newnode);
+				}
+		 	
+			}
 //この下がwhileの}	
 		}
-
+		
+		
+		
 		
 		//処理が終わり次第 返し値Routeクラスのインスタンス？
 		return null;

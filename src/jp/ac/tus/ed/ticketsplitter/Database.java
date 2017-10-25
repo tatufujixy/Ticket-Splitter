@@ -126,6 +126,8 @@ public class Database {
 	public static Station getStation(String name){
 	//駅名nameの駅のStationインスタンスを返す。なければnullを返す
 	//ほぼgetStation(int id)のコピー
+	
+	//データ取り出しのやり方は中間発表後に考え直す
 		Station sta = new Station();
 		
 		try {
@@ -181,7 +183,7 @@ public class Database {
 		return sta;
 	}
 		
-		
+	
 	
 	public static Line getLine(int id){
 	//路線IDがidのLineを返す
