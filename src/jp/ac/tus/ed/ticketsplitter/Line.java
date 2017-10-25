@@ -6,10 +6,10 @@ public class Line { // JR各路線データのクラス
 	public static final int AREA_HOKKAIDO=2;
 	public static final int AREA_SIKOKU_KYUSYU=3;
 	
-	int id;
-	String name;
-	boolean isTrunk;
-	int area=0;
+	private int id;
+	private String name;
+	private boolean isTrunk;
+	private int area=0;
 	
 	//コンストラクタはDatabaseで呼ばれる
 	Line(int id,String name,boolean trunk,int area){

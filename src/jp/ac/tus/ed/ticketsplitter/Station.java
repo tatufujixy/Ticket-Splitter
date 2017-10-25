@@ -23,16 +23,16 @@ public class Station {
 	//・・・
 	
 	
-	String name;
-	int id;
-	Map<Integer,Integer> stationIdOfLine=new HashMap<Integer,Integer>();//<line_id,station_id>
-	Map<Integer,List<Integer>> nextStationId=new HashMap<Integer,List<Integer>>();
-	int specificWardsAndCities=0;
-	boolean inYamanoteLine;
-	boolean inOsakaKanjoLine;
-	int specificArea=0;
-	int suburbArea=0;
-	Map<Integer,BigDecimal> distance=new HashMap<Integer,BigDecimal>();
+	private String name;
+	private int id;
+	private Map<Integer,Integer> stationIdOfLine=new HashMap<Integer,Integer>();//<line_id,station_id>
+	private Map<Integer,List<Integer>> nextStationId=new HashMap<Integer,List<Integer>>();
+	private int specificWardsAndCities=0;
+	private boolean inYamanoteLine;
+	private boolean inOsakaKanjoLine;
+	private int specificArea=0;
+	private int suburbArea=0;
+	private Map<Integer,BigDecimal> distance=new HashMap<Integer,BigDecimal>();
 	
 	
 	

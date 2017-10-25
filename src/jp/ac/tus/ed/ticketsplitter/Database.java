@@ -84,7 +84,7 @@ public class Database {
 				}else{
 					sta.setStationId(rs.getInt("id_station"));
 				}
-			
+				
 				sta.setStationIdOfLine(line,rs.getInt("id"));
 				sta.setName(rs.getString("name"));
 				sta.addNextStationId(line, rs.getInt("prev_station"));
@@ -249,8 +249,8 @@ public class Database {
 
 
 	//特定区間運賃とかは中間発表後に実装すれば良いかと
-	/*
+	
 	public static void main(String args[]){
-		System.out.println(getStation(12).getName());;
-	}*/
+		System.out.println(getFare(Database.FARE_HONSYU_TRUNK,new BigDecimal("10.1")));;
+	}
 }

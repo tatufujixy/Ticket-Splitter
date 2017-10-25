@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Route {
 	
-	List<Station> stationList=new ArrayList<Station>();
-	List<Line> lineList=new ArrayList<Line>();
-	BigDecimal distance=BigDecimal.ZERO;
+	private List<Station> stationList=new ArrayList<Station>();
+	private List<Line> lineList=new ArrayList<Line>();
+	private BigDecimal distance=BigDecimal.ZERO;
 	
 	//コンストラクタはTicketSplitter(、FareCalculator)で呼ばれる
 	Route(Station start){
