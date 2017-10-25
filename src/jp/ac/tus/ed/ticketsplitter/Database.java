@@ -187,23 +187,27 @@ public class Database {
 	
 	public static Line getLine(int id){
 	//路線IDがidのLineを返す
-		Line line = new Line();
 		String sql = null;
-		int lineId = 0;
 		ResultSet rs;
 		
 		sql = "select from line where id = " + id;
 		try {
 			rs=statement.executeQuery(sql);
+			if(rs.next()){ //idを持つlineが存在しないとき
+				if(rs.getString("area").equals("本州")){
+					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HONSYU);
+				}
+				if(rs.getString("area").equals("北海道")){
+					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HOKKAIDO);
+				}
+				if(rs.getString("area").equals("四国九州")){}
+					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_SIKOKU_KYUSYU);
+				}
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		
-		if(!rs.next()){ //idを持つlineが存在しないとき
-			return null;
-		}
-		
+		return null;	
 	}
 		
 	
