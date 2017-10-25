@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.math.BigDecimal;
 
 import jp.ac.tus.ed.ticketsplitter.Database;
+import jp.ac.tus.ed.ticketsplitter.FareCalculator;
 import jp.ac.tus.ed.ticketsplitter.Line;
 import jp.ac.tus.ed.ticketsplitter.Route;
 import jp.ac.tus.ed.ticketsplitter.Station;
@@ -20,7 +21,11 @@ public class TicketSplitter {
 	public static List<Ticket> getOptimizedTickets(Station start,Station dest){
 	//start駅からdest駅までの最安値の分割パターンの乗車券リストを返す
 	//中間発表までには、ダイクストラ法で経路を求めたあと、その運賃を求めて返すこととする(戻り値のリストの長さは1)
-		return null;
+		Route dijkstraroute = dijkstra(start,dest);
+		Ticket ti=new FareCalculator().calculate(dijkstraroute);
+		List<Ticket> list=new ArrayList<Ticket>();
+		list.add(ti);
+		return list;
 	}
 	
 	public static Route dijkstra(Station start,Station dest){
