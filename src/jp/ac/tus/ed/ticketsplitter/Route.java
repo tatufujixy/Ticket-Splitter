@@ -11,6 +11,17 @@ public class Route {
 	private BigDecimal distance=BigDecimal.ZERO;
 	
 	//コンストラクタはTicketSplitter(、FareCalculator)で呼ばれる
+	public Route(List<Station> sta,List<Line> line){
+		stationList=sta;
+		lineList=line;
+		
+		for(int i=1;i<stationList.size();i++){
+			BigDecimal between=stationList.get(i-1).getDistance(lineList.get(i-1).getId())
+					.subtract(stationList.get(i).getDistance(lineList.get(i-1).getId())).abs();
+			distance.add(between);
+		}
+	}
+	
 	public Route(Station start){
 		stationList.add(start);
 	}
