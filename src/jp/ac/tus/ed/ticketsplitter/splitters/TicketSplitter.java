@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.math.BigDecimal;
 
 import jp.ac.tus.ed.ticketsplitter.Database;
+import jp.ac.tus.ed.ticketsplitter.Line;
 import jp.ac.tus.ed.ticketsplitter.Route;
 import jp.ac.tus.ed.ticketsplitter.Station;
 import jp.ac.tus.ed.ticketsplitter.Ticket;
@@ -30,6 +31,7 @@ public class TicketSplitter {
 		StaNode processingStaNode;
 		Station processingSta;
 		List<Integer> processingstations_lineids;
+		Line thisline;
 		//int processing_lineid;
 		Map<Integer,List<Integer>> processingstations_map;
 		List<Integer> nextstations;
@@ -41,6 +43,7 @@ public class TicketSplitter {
 		BigDecimal absbetween;
 		//start dest間距離用変数
 		BigDecimal startdest ;
+		Route route=null;
 		
 		//処理終了のためのフラグ
 		boolean endprocess = true;
@@ -52,7 +55,7 @@ public class TicketSplitter {
 		ArrayList<StaNode> committed = new ArrayList<StaNode>();
 		//destnode dist0	
 		//未確定リストにdist0を入れる
-		 unsettled.add(new StaNode(dest,new BigDecimal("0,0"),null));
+		 unsettled.add(new StaNode(dest,new BigDecimal("0,0"),null,null));
 		
 		 //ここから下をstart StaNodeが出るまでループ
 		while(endprocess){
@@ -79,6 +82,7 @@ public class TicketSplitter {
 			 //隣接駅を路線idをもとにマップから取り出す。当然2つ要素を持つintegerのリスト。
 			 //nextstationsは両隣の駅のidを格納しているリスト。
 			 nextstations = processingstations_map.get(processing_lineid);
+			 thisline = Database.getLine(processing_lineid);
 			 for(int newStationId : nextstations){
 				 //駅を作成、それをもとにノードを作成し、unsettledに入れるかどうか確認後入れる。
 				newstation = Database.getStation(newStationId);
@@ -86,7 +90,7 @@ public class TicketSplitter {
 				//駅間の距離を算出し絶対値をつける
 				betweensta = ((processingStaNode.getSta()).getDistance(processing_lineid)).subtract(newstation.getDistance(processing_lineid));
 				absbetween = betweensta.abs();
-				newnode = new StaNode(newstation,absbetween.add(processingStaNode.getdist()),processingStaNode);
+				newnode = new StaNode(newstation,absbetween.add(processingStaNode.getdist()),processingStaNode,thisline);
 				//新しく作ったStaNodeがstart、未確定内、確定内にあるか確認。
 				if(!(committed.indexOf(newnode)==-1)){
 					//最短経路が確定しているリスト内にあったならばこのノードは破棄。なにもしない。
@@ -96,6 +100,18 @@ public class TicketSplitter {
 					//そこからstartまでの距離をたしたものなので
 					startdest = (absbetween).add(processingStaNode.getdist());
 					//経路はbackがnullになるまでnodeを追えばわかる。未実装
+							
+					StaNode pointer = newnode;
+					List<Line> linelist = new ArrayList<Line>();
+					List<Station> stalist = new ArrayList<Station>();
+					while(!(pointer.getback() == null)){
+					linelist.add(pointer.getvialine());
+					stalist.add(pointer.getSta());
+					pointer = pointer.getback();
+					}
+					stalist.add(pointer.getSta());
+					
+					route = new Route(stalist,linelist);	
 					
 					endprocess = false;
 					
@@ -121,7 +137,7 @@ public class TicketSplitter {
 		
 		
 		//処理が終わり次第 返し値Routeクラスのインスタンス？
-		return null;
+		return route;
 	
 	
 	}
@@ -132,11 +148,13 @@ class StaNode{
 	Station sta;
 	BigDecimal dist;
 	StaNode back;
+	Line vialine;
 	//コンストラクタ
-	public StaNode(Station sta,BigDecimal dist,StaNode back){
+	public StaNode(Station sta,BigDecimal dist,StaNode back,Line vialine){
 		this.sta = sta;
 		this.dist = dist;
 		this.back = back;
+		this.vialine = vialine;
 	}
 	//距離を持ってくる関数
 	public BigDecimal getdist(){
@@ -147,6 +165,9 @@ class StaNode{
 	}
 	public StaNode getback(){
 		return this.back;
+	}
+	public Line getvialine(){
+		return this.vialine;
 	}
 	@Override
 	public boolean equals(Object o){
