@@ -196,11 +196,9 @@ public class Database {
 			if(rs.next()){ //idを持つlineが存在しないとき
 				if(rs.getString("area").equals("本州")){
 					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HONSYU);
-				}
-				if(rs.getString("area").equals("北海道")){
+				}else if(rs.getString("area").equals("北海道")){
 					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HOKKAIDO);
-				}
-				if(rs.getString("area").equals("四国九州")){}
+				}else if(rs.getString("area").equals("四国九州")){}
 					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_SIKOKU_KYUSYU);
 				}
 		} catch (SQLException e) {
