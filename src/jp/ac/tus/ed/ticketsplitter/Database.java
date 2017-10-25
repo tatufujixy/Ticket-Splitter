@@ -188,7 +188,6 @@ public class Database {
 	public static Line getLine(int id){
 	//路線IDがidのLineを返す
 		String sql = null;
-		int lineId = 0;
 		ResultSet rs;
 		
 		sql = "select from line where id = " + id;
@@ -208,9 +207,7 @@ public class Database {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		
-		
-		
+		return null;	
 	}
 		
 	
