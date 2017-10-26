@@ -35,7 +35,7 @@ public class FareCalculator {
 	
 	public Ticket calculate(Route r){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
-		System.out.println(r.getDistance());
+		//System.out.println(r.getDistance());
 		
 		RouteInformation ri=getInformation(r);
 		
