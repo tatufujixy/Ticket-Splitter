@@ -1,20 +1,46 @@
 package jp.ac.tus.ed.ticketsplitter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Route {
+	
+	private List<Station> stationList=new ArrayList<Station>();
+	private List<Line> lineList=new ArrayList<Line>();
+	private BigDecimal distance=BigDecimal.ZERO;
+	
 	//コンストラクタはTicketSplitter(、FareCalculator)で呼ばれる
+	public Route(List<Station> sta,List<Line> line){
+		stationList=sta;
+		lineList=line;
+		
+		for(int i=1;i<stationList.size();i++){
+			BigDecimal between=stationList.get(i-1).getDistance(lineList.get(i-1).getId())
+					.subtract(stationList.get(i).getDistance(lineList.get(i-1).getId())).abs();
+			distance=distance.add(between);
+		}
+	}
+	public Route(Station start){
+		stationList.add(start);
+	}
 	
-	
+	public void addRoute(Line line,Station sta){
+		stationList.add(sta);
+		lineList.add(line);
+		
+		BigDecimal between=stationList.get(stationList.size()-1).getDistance(line.getId())
+				.subtract(sta.getDistance(line.getId())).abs();
+		distance=distance.add(between);
+	}
 	
 	public List<Station> getStationsList(){
 	//乗車駅から降車駅までの駅のリスト
-		return null;
+		return stationList;
 	}
 	public List<Line> getLinesList(){
 	//乗車駅から降車駅までの駅間の路線リスト
-		return null;
+		return lineList;
 	}
 	/*
 	s=getStationsList(), l=getLinesList();
@@ -23,13 +49,33 @@ public class Route {
 	
 	*/
 	
+	public String toString(){
+		String str="";
+		for(String s : via()){
+			str+=s+" ";
+		}
+		return str;
+	}
 	
 	public BigDecimal getDistance(){
 	//この経路の営業キロ
-		return null;
+		return distance;
 	}
 	public List<String> via(){
 	//この経路の経由路線を文字列リストで返す(GUIから呼ばれる)
-		return null;
+		
+		List<String> list=new ArrayList<String>();
+		
+		String via=null;
+		
+		for(int i=0;i<lineList.size();i++){
+			if(via==null || !via.equals(lineList.get(i).getName())){
+				list.add(stationList.get(i).getName());
+				list.add(lineList.get(i).getName());
+				via=lineList.get(i).getName();
+			}
+		}
+		list.add(stationList.get(stationList.size()-1).getName());
+		return list;
 	}
 }

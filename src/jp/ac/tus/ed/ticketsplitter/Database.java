@@ -1,6 +1,9 @@
 package jp.ac.tus.ed.ticketsplitter;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+
+import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitter;
 
 public class Database {
 	//運賃エリア(TRUNK:幹線   LOCAL:地方交通線)
@@ -84,7 +89,7 @@ public class Database {
 				}else{
 					sta.setStationId(rs.getInt("id_station"));
 				}
-			
+				
 				sta.setStationIdOfLine(line,rs.getInt("id"));
 				sta.setName(rs.getString("name"));
 				sta.addNextStationId(line, rs.getInt("prev_station"));
@@ -126,11 +131,13 @@ public class Database {
 	public static Station getStation(String name){
 	//駅名nameの駅のStationインスタンスを返す。なければnullを返す
 	//ほぼgetStation(int id)のコピー
+	
+	//データ取り出しのやり方は中間発表後に考え直す
 		Station sta = new Station();
 		
 		try {
 			statement.setQueryTimeout(30);
-			String sql = "select * from station where name = "+name; // 文字列で＝は使える？
+			String sql = "select * from station where name = '"+name+"'"; // 文字列で＝は使える？
 			ResultSet rs=statement.executeQuery(sql);
 			
 			if(!rs.next()){//idをもつ駅が存在しない
@@ -176,32 +183,36 @@ public class Database {
 				sta.setDistance(line, new BigDecimal(rs.getString("distance")));
 			}while(rs.next());
 		} catch (SQLException e){
+			e.printStackTrace();
 			return null;
 		}
 		return sta;
 	}
 		
-		
+	
 	
 	public static Line getLine(int id){
 	//路線IDがidのLineを返す
-		Line line = new Line();
 		String sql = null;
-		int lineId = 0;
 		ResultSet rs;
 		
-		sql = "select from line where id = " + id;
+		sql = "select * from line where id = " + id;
 		try {
 			rs=statement.executeQuery(sql);
+			if(rs.next()){ //idを持つlineが存在しないとき
+				if(rs.getString("area").equals("本州")){
+					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HONSYU);
+				}else if(rs.getString("area").equals("北海道")){
+					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HOKKAIDO);
+				}else if(rs.getString("area").equals("四国九州")){
+					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_SIKOKU_KYUSYU);
+				}
+			}
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		
-		if(!rs.next()){ //idを持つlineが存在しないとき
-			return null;
-		}
-		
+		return null;
 	}
 		
 	
@@ -209,28 +220,38 @@ public class Database {
 	public static int getFare(int area, BigDecimal distance){
 	//運賃エリアareaの、距離distanceでの運賃を返す
 	//エリアの指定とdistanceの小数点以下を切り上げ
+		//System.out.println("getFare : "+area+" "+distance.toPlainString());
+		
 		BigDecimal bd = distance.setScale(0, BigDecimal.ROUND_UP); // distanceの小数点以下を切り上げ
 		int fare = 0;
 		String sql = null;
 	//select * from fare where min<=(distance整数値) and max<=(distance整数値) and (エリア指定)
 		switch(area){
 			case FARE_HOKKAIDO_TRUNK:
-				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (北海道幹線)";
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='北海道幹線'";
 				break;
 			case FARE_HOKKAIDO_LOCAL:
-				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (北海道地方交通線)";
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='北海道地方交通線'";
 				break;
 			case FARE_HONSYU_TRUNK:
-				sql = "select * from fare where min<=" + bd +" and max>=" + bd + " and (本州幹線)";
+				sql = "select * from fare where min<=" + bd +" and max>=" + bd + " and area='本州幹線'";
 				break;
 			case FARE_HONSYU_LOCAL:
-				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and (本州地方交通線)";
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='本州地方交通線'";
+				break;
+			case FARE_SPECIFIC_TOKYO:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='東京電車特定区間'";
 				break;
 		}
-		
+		//System.out.println(sql);
 		try {
 			ResultSet rs = statement.executeQuery(sql);
-			fare = rs.getInt("fare");
+			if(rs.next()){
+				fare = rs.getInt("fare");
+			}else{
+				System.out.println("運賃が見つからない");
+			}
+			
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -245,8 +266,35 @@ public class Database {
 
 
 	//特定区間運賃とかは中間発表後に実装すれば良いかと
-	/*
-	public static void main(String args[]){
-		System.out.println(getStation(12).getName());;
-	}*/
+	
+	public static void main(String args[]) throws IOException{
+		//System.out.println(getStation("柏").getStationId());
+		//
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		
+		Station start=null;
+		while(start==null){
+			System.out.println("乗車駅を入力:");
+			String str=in.readLine();
+			start=Database.getStation(str);
+		}
+		Station dest=null;
+		while(dest==null){
+			System.out.println("降車駅を入力:");
+			String str=in.readLine();
+			dest=Database.getStation(str);
+		}
+		
+		List<Ticket> list=TicketSplitter.getOptimizedTickets(start, dest);
+		
+		for(Ticket t:list){
+			Route r=t.getRoute();
+			System.out.println("運賃:"+t.getFare()+"円");
+			System.out.print("経路 : ");
+			for(String str : r.via()){
+				System.out.print(str+"  ");
+			}
+		}
+		
+	}
 }
