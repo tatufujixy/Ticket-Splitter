@@ -68,8 +68,11 @@ public class Database {
 		stationMap=getAllStations();
 
 	}
-
+	
 	public static Station getStation(int id){
+		return stationMap.get(id);
+	}
+	private static Station getStationFromDb(int id){
 	//idを指定してStationインスタンスを返す
 	//idは、stationテーブルにおけるid,id_stationのどちらでも良い
 		Station sta=new Station();
@@ -130,12 +133,20 @@ public class Database {
 		return sta;
 	}
 	
-	public static HashMap<Integer,Station> getAllStations(){
 	//データベース内のすべての駅情報をリストで返す
+	public static HashMap<Integer,Station> getAllStations(){
+		int i = 0;
+		int id = 0;
+		Station stn = new Station();
 		if(stationMap!=null){
-			return stationMap;
+			// メモの内容を記述：最初にすべての駅データを取り出す
+			while(i < （tableの大きさ)){
+				stn = getStation(id);
+				stationMap.put(i, stn);
+				i++;
+			}
 		}
-		// メモの内容を記述：最初にすべての駅データを取り出す
+		
 		
 		
 		
