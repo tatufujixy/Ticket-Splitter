@@ -10,7 +10,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitter;
 
@@ -30,6 +32,8 @@ public class Database {
 	//初期化はstaticイニシャライザで
 	static Connection conn=null;
 	static Statement statement = null;
+	
+	static HashMap<Integer,Station> stationMap;
 
 	static{
 		try {
@@ -59,6 +63,9 @@ public class Database {
 				e.printStackTrace();
 			}
 		}*/
+		
+		
+		stationMap=getAllStations();
 
 	}
 
@@ -122,12 +129,19 @@ public class Database {
 		}
 		return sta;
 	}
-/*
-	public static List<Station> getAllStations(){
+	
+	public static HashMap<Integer,Station> getAllStations(){
 	//データベース内のすべての駅情報をリストで返す
-		return null;
+		if(stationMap!=null){
+			return stationMap;
+		}
+		// メモの内容を記述：最初にすべての駅データを取り出す
+		
+		
+		
+		return stationMap;
 	}
-*/	
+	
 	public static Station getStation(String name){
 	//駅名nameの駅のStationインスタンスを返す。なければnullを返す
 	//ほぼgetStation(int id)のコピー
