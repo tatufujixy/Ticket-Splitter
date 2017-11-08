@@ -59,6 +59,11 @@ public class Station {
 	//単独駅では必ずgetStationId()と同じ値になる
 		return stationIdOfLine.get(lineId);
 	}
+	public List<Integer> getStationIdOfLine(){
+		//この駅が持つすべてのid
+		return new ArrayList<Integer>(stationIdOfLine.values());
+	}
+	
 	void addNextStationId(int line,int nextStation){
 		if(nextStation==0){
 			return;
