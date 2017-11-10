@@ -137,4 +137,53 @@ public class FareCalculator {
 		
 		return ri;
 	}
+	
+	
+	
+	private Route getFareCalculationRoute(Route r){
+		
+		
+		
+		return null;
+	}
+	
+	
+	private static final int yamanote=-1;
+	private static final int osakaKanjo=-2;
+	private boolean existsPassage(Route route,int area){
+		//経路が指定の都区市内・山手線内・大阪環状線内を通過していればtrue
+		//引数areaは、特定都区市内なら、Stationの定数、山手線内・大阪環状線内なら上で定義した値
+		
+		List<Station> list=route.getStationsList();
+		
+		boolean a=false,b=false,c=false;
+		
+		
+		for(int i=0;i<list.size();i++){
+			switch(area){
+				case yamanote:
+					a=a || !list.get(i).isInYamanoteLine();
+					b=b || (a && list.get(i).isInYamanoteLine());
+					c=c || (b && list.get(i).isInYamanoteLine());
+					break;
+				case osakaKanjo:
+					a=a || !list.get(i).isInOsakaKanjoLine();
+					b=b || (a && list.get(i).isInOsakaKanjoLine());
+					c=c || (b && list.get(i).isInOsakaKanjoLine());
+					
+					break;
+				default:
+					a=a || list.get(i).getSpecificWardsAndCities()!=area;
+					b=b || (a && list.get(i).getSpecificWardsAndCities()==area);
+					c=c || (b && list.get(i).getSpecificWardsAndCities()==area);
+					break;
+			}
+			
+			if(c){
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }
