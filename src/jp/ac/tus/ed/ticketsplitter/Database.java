@@ -134,21 +134,23 @@ public class Database {
 	}
 	
 	//データベース内のすべての駅情報をリストで返す
-	public static HashMap<Integer,Station> getAllStations(){
-		int i = 0;
-		int id = 0;
+	public static HashMap<Integer,Station> getAllStations() throws SQLException{
+		int Id = 0;
 		Station stn = new Station();
+		statement.setQueryTimeout(30);
+		String sql = "select * from station";
+		ResultSet rs = statement.executeQuery(sql);
+		
 		if(stationMap!=null){
 			// メモの内容を記述：最初にすべての駅データを取り出す
-			while(i < （tableの大きさ)){
-				stn = getStation(id);
-				stationMap.put(i, stn);
-				i++;
+			while( rs.next()){
+				int id =  rs.getInt("id");
+				Station st = getStationFromDb(id);
+				for(int i : st.getStationIdOfLine()){
+					stationMap.put(i, st);
+				}
 			}
 		}
-		
-		
-		
 		
 		return stationMap;
 	}
