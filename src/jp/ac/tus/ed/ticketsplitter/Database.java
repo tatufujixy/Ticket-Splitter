@@ -10,7 +10,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitter;
 
@@ -30,6 +32,8 @@ public class Database {
 	//初期化はstaticイニシャライザで
 	static Connection conn=null;
 	static Statement statement = null;
+	
+	static HashMap<Integer,Station> stationMap;
 
 	static{
 		try {
@@ -59,10 +63,16 @@ public class Database {
 				e.printStackTrace();
 			}
 		}*/
+		
+		
+		stationMap=getAllStations();
 
 	}
-
+	
 	public static Station getStation(int id){
+		return stationMap.get(id);
+	}
+	private static Station getStationFromDb(int id){
 	//idを指定してStationインスタンスを返す
 	//idは、stationテーブルにおけるid,id_stationのどちらでも良い
 		Station sta=new Station();
@@ -122,12 +132,27 @@ public class Database {
 		}
 		return sta;
 	}
-/*
-	public static List<Station> getAllStations(){
+	
 	//データベース内のすべての駅情報をリストで返す
-		return null;
+	public static HashMap<Integer,Station> getAllStations(){
+		int i = 0;
+		int id = 0;
+		Station stn = new Station();
+		if(stationMap!=null){
+			// メモの内容を記述：最初にすべての駅データを取り出す
+			while(i < （tableの大きさ)){
+				stn = getStation(id);
+				stationMap.put(i, stn);
+				i++;
+			}
+		}
+		
+		
+		
+		
+		return stationMap;
 	}
-*/	
+	
 	public static Station getStation(String name){
 	//駅名nameの駅のStationインスタンスを返す。なければnullを返す
 	//ほぼgetStation(int id)のコピー
