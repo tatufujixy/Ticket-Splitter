@@ -21,7 +21,7 @@ public class FareWeightGraphCreator {
 	static Connection conn = null;
 	static Statement statement = null;
 	
-	static{
+	static{ 
 		try{
 			Class.forName("org.sqlite.JBBC");
 			conn = DriverManager.getConnection("jdbc:sqlite:"+"res/faregraph.db");
@@ -37,6 +37,7 @@ public class FareWeightGraphCreator {
 		
 	} */
 
+	// mainクラス
 	public static void main(String[] args) throws IOException{
 		// TODO 自動生成されたメソッド・スタブ
 		
