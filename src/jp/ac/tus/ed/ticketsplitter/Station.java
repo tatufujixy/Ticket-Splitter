@@ -51,12 +51,10 @@ public class Station {
 	public int getStationId(){
 	//駅ID。乗換可能駅であればその共通のID、すなわちDBのid_station
 		
-		return -1;
 		return id;
 	}
 	void setStationIdOfLine(int line,int station){
 		stationIdOfLine.put(line, station);
->>>>>>> branch 'master' of https://github.com/tatufujixy/Ticket-Splitter.git
 	}
 	public int getStationIdOfLine(int lineId){
 	//乗換可能駅での、路線IDがlineIdのレコードでのID
