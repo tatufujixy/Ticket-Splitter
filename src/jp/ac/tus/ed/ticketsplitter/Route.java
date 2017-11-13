@@ -25,6 +25,24 @@ public class Route {
 		stationList.add(start);
 	}
 	
+	
+	
+	// FareCalculatorで、経路を編集するために必要なメソッド    11/10
+	public Route divideHead(int i){
+		//このRouteの先頭からi番目の駅までの経路を取り出す
+		return null;
+	}
+	public Route divideTail(int i){
+		//先頭からi番目の駅から下車駅までの経路を取り出す
+		return null;
+	}
+	public void join(Route r){
+		//このRouteの後ろに、引数rの経路を連結する。
+		//この経路の下車駅と、rの乗車駅が同じであることが条件
+	}
+	
+	
+	
 	public void addRoute(Line line,Station sta){
 		stationList.add(sta);
 		lineList.add(line);

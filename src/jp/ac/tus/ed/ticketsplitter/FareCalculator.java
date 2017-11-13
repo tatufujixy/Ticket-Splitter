@@ -141,18 +141,31 @@ public class FareCalculator {
 	
 	
 	private Route getFareCalculationRoute(Route r){
+		//特定都区市内・山手線内による運賃計算経路を求める
+		List<Station> stationsList=r.getStationsList();
 		
+		boolean startAreaPass=stationsList.get(0).getSpecificArea()!=0
+				&& existsPassage(r,stationsList.get(0).getSpecificArea());
+		boolean destAreaPass=stationsList.get(stationsList.size()-1).getSpecificArea()!=0
+				&& existsPassage(r,stationsList.get(stationsList.size()-1).getSpecificArea());
 		
+		if(startAreaPass && destAreaPass){
+			//乗車駅・下車駅の両側が経路変更の対象
+			
+		}else if(startAreaPass){
+			
+		}else if(destAreaPass){
+			
+		}
 		
-		return null;
+		return r;
 	}
 	
 	
 	private static final int yamanote=-1;
-	private static final int osakaKanjo=-2;
 	private boolean existsPassage(Route route,int area){
-		//経路が指定の都区市内・山手線内・大阪環状線内を通過していればtrue
-		//引数areaは、特定都区市内なら、Stationの定数、山手線内・大阪環状線内なら上で定義した値
+		//経路が指定の都区市内・山手線内を通過していればtrue
+		//引数areaは、特定都区市内なら、Stationの定数、山手線内なら上で定義した値
 		
 		List<Station> list=route.getStationsList();
 		
@@ -164,18 +177,12 @@ public class FareCalculator {
 				case yamanote:
 					a=a || !list.get(i).isInYamanoteLine();
 					b=b || (a && list.get(i).isInYamanoteLine());
-					c=c || (b && list.get(i).isInYamanoteLine());
-					break;
-				case osakaKanjo:
-					a=a || !list.get(i).isInOsakaKanjoLine();
-					b=b || (a && list.get(i).isInOsakaKanjoLine());
-					c=c || (b && list.get(i).isInOsakaKanjoLine());
-					
+					c=c || (b && !list.get(i).isInYamanoteLine());
 					break;
 				default:
 					a=a || list.get(i).getSpecificWardsAndCities()!=area;
 					b=b || (a && list.get(i).getSpecificWardsAndCities()==area);
-					c=c || (b && list.get(i).getSpecificWardsAndCities()==area);
+					c=c || (b && list.get(i).getSpecificWardsAndCities()!=area);
 					break;
 			}
 			
@@ -185,5 +192,49 @@ public class FareCalculator {
 		}
 		
 		return false;
+	}
+	
+	
+	private Route cutStartArea(Route r,int area){
+		//乗車駅側の特定都区市内・山手線内の経路を取り除く
+		List<Station> list=r.getStationsList();
+		for(int i=1;i<list.size();i++){
+			switch(area){
+				case yamanote:
+					if(!list.get(i).isInYamanoteLine()){
+						return r.divideTail(i-1);
+					}
+					break;
+				default:
+					if(list.get(i).getSpecificWardsAndCities()!=area){
+						return r.divideTail(i-1);
+					}
+					break;
+			}
+		}
+		
+		//ここまで来ないはず
+		return r;
+	}
+	private Route cutDestinationArea(Route r,int area){
+		//下車駅側の特定都区市内・山手線内の経路を取り除く
+		List<Station> list=r.getStationsList();
+		for(int i=list.size()-2;i>=0;i--){
+			switch(area){
+				case yamanote:
+					if(!list.get(i).isInYamanoteLine()){
+						return r.divideHead(i+1);
+					}
+					break;
+				default:
+					if(list.get(i).getSpecificWardsAndCities()!=area){
+						return r.divideHead(i+1);
+					}
+					break;
+			}
+		}
+		
+		//ここまで来ないはず
+		return r;
 	}
 }
