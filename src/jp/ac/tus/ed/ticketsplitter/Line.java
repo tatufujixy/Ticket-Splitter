@@ -4,7 +4,8 @@ public class Line { // JR各路線データのクラス
 	//地域(運賃の違いのため)
 	public static final int AREA_HONSYU=1;
 	public static final int AREA_HOKKAIDO=2;
-	public static final int AREA_SIKOKU_KYUSYU=3;
+	public static final int AREA_SHIKOKU=3;
+	public static final int AREA_KYUSYU=4;
 	
 	private int id;
 	private String name;
