@@ -23,9 +23,9 @@ public class Database {
 	public static final int FARE_HONSYU_TRUNK=3; // 本州幹線
 	public static final int FARE_HONSYU_LOCAL=4; // 本州地方交通線
 	public static final int FARE_SHIKOKU_TRUNK=5; // 四国幹線
-	public static final int FARE_SHIKOKU_LOCAL=6; // 四国地方交通線
+	//public static final int FARE_SHIKOKU_LOCAL=6; // 四国地方交通線
 	public static final int FARE_KYUSYU_TRUNK=7; // 九州幹線
-	public static final int FARE_KYUSYU_LOCAL=8; // 九州地方交通線
+	//public static final int FARE_KYUSYU_LOCAL=8; // 九州地方交通線
 	
 	//・・・
 	public static final int FARE_YAMANOTE=11;

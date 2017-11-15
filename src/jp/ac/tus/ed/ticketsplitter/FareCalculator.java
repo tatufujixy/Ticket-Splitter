@@ -22,6 +22,10 @@ public class FareCalculator {
 		//<エリア、距離>エリアはLineクラスのstatic変数の値
 		//各エリアの運賃計算キロが入る
 		
+		BigDecimal shikokuLocal=BigDecimal.ZERO;
+		BigDecimal kyusyuLocal=BigDecimal.ZERO;
+		//四国・九州の地方交通線の営業キロ
+		
 		int additionFare=0;//加算運賃があればここに累積して加算される
 		
 		RouteInformation(){
@@ -96,6 +100,7 @@ public class FareCalculator {
 					.add(ri.areaDistance.get(Line.AREA_KYUSYU)));
 			
 			//!!!!!!さらに加算額もfareに追加する!!!!!!!
+			
 		}else if(ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)==1){
 			//北海道のみ
 			if(ri.allTrunk){
@@ -133,8 +138,15 @@ public class FareCalculator {
 				fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK,r.getDistance());
 			}else if(ri.containTrunk){
 				//特定運賃に該当するか調べる！！！
+				fare=Database.getTrunkAndLocalSpecificFare(ri.areaDistance.get(Line.AREA_SHIKOKU), r.getDistance(), Line.AREA_SHIKOKU);
+				if(fare==-1){
+					fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK,ri.areaDistance.get(Line.AREA_SHIKOKU));
+				}
 			}else{
-				
+				fare=Database.getLocalSpecificFare(ri.areaDistance.get(Line.AREA_SHIKOKU),r.getDistance(),Line.AREA_SHIKOKU);
+				if(fare==-1){
+					fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK,ri.areaDistance.get(Line.AREA_SHIKOKU));
+				}
 			}
 		}else{
 			//九州のみ
@@ -142,8 +154,15 @@ public class FareCalculator {
 				fare=Database.getFare(Database.FARE_KYUSYU_TRUNK,r.getDistance());
 			}else if(ri.containTrunk){
 				//特定運賃に該当するか調べる！！！
+				fare=Database.getTrunkAndLocalSpecificFare(ri.areaDistance.get(Line.AREA_KYUSYU), r.getDistance(), Line.AREA_KYUSYU);
+				if(fare==-1){
+					fare=Database.getFare(Database.FARE_KYUSYU_TRUNK,ri.areaDistance.get(Line.AREA_KYUSYU));
+				}
 			}else{
-				
+				fare=Database.getLocalSpecificFare(ri.areaDistance.get(Line.AREA_KYUSYU),r.getDistance(),Line.AREA_KYUSYU);
+				if(fare==-1){
+					fare=Database.getFare(Database.FARE_KYUSYU_TRUNK,ri.areaDistance.get(Line.AREA_KYUSYU));
+				}
 			}
 		}
 		
@@ -187,6 +206,14 @@ public class FareCalculator {
 						.subtract(back.getDistance(l.getId())
 							.multiply(new BigDecimal("1.1")).setScale(1, BigDecimal.ROUND_HALF_UP))
 						.abs();
+				
+				if(l.getArea()==Line.AREA_SHIKOKU){
+					BigDecimal opDist=sta.getDistance(l.getId()).subtract(back.getDistance(l.getId())).abs();
+					ri.shikokuLocal=ri.shikokuLocal.add(opDist);
+				}else if(l.getArea()==Line.AREA_KYUSYU){
+					BigDecimal opDist=sta.getDistance(l.getId()).subtract(back.getDistance(l.getId())).abs();
+					ri.kyusyuLocal=ri.kyusyuLocal.add(opDist);
+				}
 			}
 			
 			//各エリアの距離を更新
