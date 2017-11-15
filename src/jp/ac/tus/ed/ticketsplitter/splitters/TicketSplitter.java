@@ -63,19 +63,19 @@ public class TicketSplitter {
 		
 		 //ここから下をstart StaNodeが出るまでループ
 		while(endprocess){
-		 //最短距離未確定リストをコスト順に並べる
-		 //ListComparatorクラスの条件に従いソート
+		//最短距離未確定リストをコスト順に並べる
+		//ListComparatorクラスの条件に従いソート
 		 Collections.sort(unsettled,new ListComparator());
 		//未確定リストから、距離の最低のもの(つまり最初のもの)を確定済みリストに移動、その隣の駅を取り出す
 		//取り出した駅(unsettled.get(0))が確定済みリストにあれば無視、未確定リストにあれば、距離を計算しなおし、短ければ距離・直前の駅を更新
-		 processingStaNode = unsettled.remove(0);
-		 committed.add(processingStaNode);
-		 //処理する駅を取り出す
-		 processingSta = processingStaNode.getSta();
-		 //その駅の路線idをとる
-		 processingstations_lineids = processingSta.getLineId();
-		 //その駅のマップを取り出す。取り出した路線idをもとに隣接駅をマップから取り出す。
-		 processingstations_map = processingSta.nextStationId();//戻り値がマップの形
+		processingStaNode = unsettled.remove(0);
+		committed.add(processingStaNode);
+		//処理する駅を取り出す
+		processingSta = processingStaNode.getSta();
+		//その駅の路線idをとる
+		processingstations_lineids = processingSta.getLineId();
+		//その駅のマップを取り出す。取り出した路線idをもとに隣接駅をマップから取り出す。
+		processingstations_map = processingSta.nextStationId();//戻り値がマップの形
 		 
 		for(int processing_lineid : processingstations_lineids){
 			 //ある路線の、隣接駅をすべて抜き出しノードにする。取り出した路線idは消す。
@@ -88,7 +88,7 @@ public class TicketSplitter {
 			 nextstations = processingstations_map.get(processing_lineid);
 			 thisline = Database.getLine(processing_lineid);
 			 for(int newStationId : nextstations){
-				 //駅を作成、それをもとにノードを作成し、unsettledに入れるかどうか確認後入れる。
+				//駅を作成、それをもとにノードを作成し、unsettledに入れるかどうか確認後入れる。
 				newstation = Database.getStation(newStationId);
 				//nextstations.remove(0);
 				//駅間の距離を算出し絶対値をつける
@@ -127,21 +127,22 @@ public class TicketSplitter {
 						unsettled.add(newnode);
 					}else{
 						unsettled.add(alreadynode);
-						}
-					}else{
+					}
+				}else{
 				//未確定、確定、startnodeの条件に合わない場合は単に未確定リストに追加。
-					unsettled.add(newnode);}
+					unsettled.add(newnode);
 				}
-		 	
 			}
-//この下がwhileの}	
+		 	
 		}
+//この下がwhileの}	
+	}
 		
 		
 		
 		
 		//処理が終わり次第 返し値Routeクラスのインスタンス？
-		return route;
+	return route;
 	
 	
 	}

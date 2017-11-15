@@ -23,9 +23,14 @@ public class Database {
 	public static final int FARE_HONSYU_TRUNK=3; // 本州幹線
 	public static final int FARE_HONSYU_LOCAL=4; // 本州地方交通線
 	public static final int FARE_SHIKOKU_TRUNK=5; // 四国幹線
-	public static final int FARE_SHIKOKU_LOCAL=6; // 四国地方交通線
+	//public static final int FARE_SHIKOKU_LOCAL=6; // 四国地方交通線
 	public static final int FARE_KYUSYU_TRUNK=7; // 九州幹線
-	public static final int FARE_KYUSYU_LOCAL=8; // 九州地方交通線
+	//public static final int FARE_KYUSYU_LOCAL=8; // 九州地方交通線
+	
+	//加算額
+	public static final int ADDITIONAL_FARE_HOKKAIDO=50;
+	public static final int ADDITIONAL_FARE_SHIKOKU=51;
+	public static final int ADDITIONAL_FARE_KYUSYU=52;
 	
 	//・・・
 	public static final int FARE_YAMANOTE=11;
@@ -253,7 +258,45 @@ public class Database {
 		return null;
 	}
 		
+	public static int getSpecificSectionFare(Station s1,Station s2){
+		//s1とs2の間で特定区間運賃が設定されていればその運賃を返す
+		//設定されていなければ-1を返す
+		
+		return -1;
+	}
 	
+	public static Station getCentralStationOfWardsAndCities(int area){
+		//引数は、Stationクラスのstatic変数（CITY_エリア名）
+		//特定都区市内の中心駅を返す
+		
+		
+		return null;
+	}
+	public static Station getCentralStationOfYamanoteLine(){
+		//山手線内の中心駅（東京駅）を返す
+		return null;
+	}
+	
+	public static int getAdditionalFare(Route r){
+		//経路rの加算運賃を返す
+		
+		
+		return 0;
+	}
+	public static int getTrunkAndLocalSpecificFare(BigDecimal fareCalcKilos,BigDecimal operatingKilos,int area){
+		//運賃計算キロがfareCalcKilos,営業キロがoparatingKilos、エリアがarea(Lineクラスのstatic変数AREA_(エリア名))のときの、
+		//幹線と地方交通線を連続して利用するときの特定運賃を返す
+		//当てはまらなければ-1を返す
+		
+		return -1;
+	}
+	public static int getLocalSpecificFare(BigDecimal convertedKilos,BigDecimal operatingKilos,int area){
+		//擬制キロがconvertedKilos,営業キロがoparatingKilos、エリアがarea(Lineクラスのstatic変数AREA_(エリア名))のときの、
+		//地方交通線のみ利用するときの特定運賃を返す
+		//当てはまらなければ-1を返す
+		
+		return -1;
+	}
 	
 	public static int getFare(int area, BigDecimal distance){
 	//運賃エリアareaの、距離distanceでの運賃を返す
