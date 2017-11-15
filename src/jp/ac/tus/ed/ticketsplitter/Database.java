@@ -27,7 +27,7 @@ public class Database {
 	public static final int FARE_KYUSYU_TRUNK=7; // 九州幹線
 	//public static final int FARE_KYUSYU_LOCAL=8; // 九州地方交通線
 	
-	//加算額
+	//加算
 	public static final int ADDITIONAL_FARE_HOKKAIDO=50;
 	public static final int ADDITIONAL_FARE_SHIKOKU=51;
 	public static final int ADDITIONAL_FARE_KYUSYU=52;

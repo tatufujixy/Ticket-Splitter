@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitter;
+
 public class FareCalculator {
 	
 	private class RouteInformation{//運賃計算に必要な情報をまとめたもの
@@ -21,12 +23,6 @@ public class FareCalculator {
 		Map<Integer,BigDecimal> areaDistance=new HashMap<Integer,BigDecimal>();
 		//<エリア、距離>エリアはLineクラスのstatic変数の値
 		//各エリアの運賃計算キロが入る
-		
-		BigDecimal shikokuLocal=BigDecimal.ZERO;
-		BigDecimal kyusyuLocal=BigDecimal.ZERO;
-		//四国・九州の地方交通線の営業キロ
-		
-		int additionFare=0;//加算運賃があればここに累積して加算される
 		
 		RouteInformation(){
 			areaDistance.put(Line.AREA_HOKKAIDO, BigDecimal.ZERO);
@@ -49,20 +45,12 @@ public class FareCalculator {
 		void setDestinationStation(String s){
 			dest=s;
 		}
-		
-		@Override
-		public List<String> via(){
-			List<String> list=super.via();
-			
-			if(start!=null){
-				list.set(0, start);
-			}
-			if(dest!=null){
-				list.set(list.size()-1, dest);
-			}
-			return list;
+		String getStartStation(){
+			return start;
 		}
-		
+		String getDestinationStation(){
+			return dest;
+		}
 	}
 	
 	
@@ -100,6 +88,15 @@ public class FareCalculator {
 					.add(ri.areaDistance.get(Line.AREA_KYUSYU)));
 			
 			//!!!!!!さらに加算額もfareに追加する!!!!!!!
+			if(ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)!=0){
+				fare+=Database.getFare(Database.ADDITIONAL_FARE_HOKKAIDO,ri.areaDistance.get(Line.AREA_HOKKAIDO));
+			}
+			if(ri.areaDistance.get(Line.AREA_SHIKOKU).compareTo(BigDecimal.ZERO)!=0){
+				fare+=Database.getFare(Database.ADDITIONAL_FARE_SHIKOKU,ri.areaDistance.get(Line.AREA_SHIKOKU));
+			}
+			if(ri.areaDistance.get(Line.AREA_KYUSYU).compareTo(BigDecimal.ZERO)!=0){
+				fare+=Database.getFare(Database.ADDITIONAL_FARE_KYUSYU,ri.areaDistance.get(Line.AREA_KYUSYU));
+			}
 			
 		}else if(ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)==1){
 			//北海道のみ
@@ -166,13 +163,12 @@ public class FareCalculator {
 			}
 		}
 		
+		fare+=Database.getAdditionalFare(r);
 		
-		
-		return new Ticket(r,fare+ri.additionFare);
+		return new Ticket(r,fare);
 	}
 	
 	RouteInformation getInformation(Route r){
-		
 		List<Station> stations=r.getStationsList();
 		List<Line> lines=r.getLinesList();
 		
@@ -207,13 +203,6 @@ public class FareCalculator {
 							.multiply(new BigDecimal("1.1")).setScale(1, BigDecimal.ROUND_HALF_UP))
 						.abs();
 				
-				if(l.getArea()==Line.AREA_SHIKOKU){
-					BigDecimal opDist=sta.getDistance(l.getId()).subtract(back.getDistance(l.getId())).abs();
-					ri.shikokuLocal=ri.shikokuLocal.add(opDist);
-				}else if(l.getArea()==Line.AREA_KYUSYU){
-					BigDecimal opDist=sta.getDistance(l.getId()).subtract(back.getDistance(l.getId())).abs();
-					ri.kyusyuLocal=ri.kyusyuLocal.add(opDist);
-				}
 			}
 			
 			//各エリアの距離を更新
@@ -235,8 +224,32 @@ public class FareCalculator {
 		boolean destAreaPass=stationsList.get(stationsList.size()-1).getSpecificArea()!=0
 				&& existsPassage(r,stationsList.get(stationsList.size()-1).getSpecificArea());
 		
+		int start_i=0,dest_i=0;
+		if(startAreaPass){
+			int area=stationsList.get(0).getSpecificArea();
+			for(int i=0;i<stationsList.size();i++){
+				if(stationsList.get(i).getSpecificArea()!=area){
+					start_i=i;
+					break;
+				}
+			}
+		}
+		if(destAreaPass){
+			int area=stationsList.get(stationsList.size()-1).getSpecificArea();
+			for(int i=stationsList.size()-1;i>=0;i--){
+				if(stationsList.get(i).getSpecificArea()!=area){
+					dest_i=i;
+					break;
+				}
+			}
+		}
+		
 		if(startAreaPass && destAreaPass){
 			//乗車駅・下車駅の両側が特定都区市内による経路変更の対象
+			Route devided=r.divideHead(dest_i).divideTail(start_i);
+			
+			
+			
 			
 		}
 		if(startAreaPass){
