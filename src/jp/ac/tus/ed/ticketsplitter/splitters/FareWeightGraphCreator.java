@@ -24,7 +24,7 @@ public class FareWeightGraphCreator {
 	static Connection conn = null;
 	static Statement statement = null;
 	
-	int start_id, dest_id, fare;
+	//int start_id, dest_id, fare;
 	
 	static void createDatabase(){
 		//最初に呼ぶメソッド
@@ -44,7 +44,21 @@ public class FareWeightGraphCreator {
 			Class.forName("org.sqlite.JBBC");
 			conn = DriverManager.getConnection("jdbc:sqlite:"+"res/faregraph.db");
 			statement = conn.createStatement();
-			statement.executeUpdate("insert into fare values(" + start_id +"," + dest_id +"," + fare + ")");
+			statement.executeUpdate("insert into fare values(" + start_id + "," + dest_id + "," + fare + ")");
+		}catch(ClassNotFoundException e){
+			e.printStackTrace();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+	}
+	
+	//データの消去(念のため)
+	public static void DataDelete(int start_id, int dest_id, int fare){
+		try{
+			Class.forName("org.sqlite.JBBC");
+			conn = DriverManager.getConnection("jdbc:sqlite:"+"res/faregraph.db");
+			statement = conn.createStatement();
+			statement.executeUpdate("delete from fare where start_id =" + start_id + "and dest_id =" + dest_id);
 		}catch(ClassNotFoundException e){
 			e.printStackTrace();
 		}catch(SQLException e){
