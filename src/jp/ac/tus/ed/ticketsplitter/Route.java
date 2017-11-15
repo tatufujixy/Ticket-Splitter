@@ -12,8 +12,8 @@ public class Route {
 	
 	//コンストラクタはTicketSplitter(、FareCalculator)で呼ばれる
 	public Route(List<Station> sta,List<Line> line){
-		stationList=sta;
-		lineList=line;
+		stationList.addAll(sta);
+		lineList.addAll(line);
 		
 		for(int i=1;i<stationList.size();i++){
 			BigDecimal between=stationList.get(i-1).getDistance(lineList.get(i-1).getId())
@@ -29,14 +29,15 @@ public class Route {
 	
 	// FareCalculatorで、経路を編集するために必要なメソッド    11/10
 	public Route divideHead(int i){
-		//このRouteの先頭からi番目の駅までの経路を取り出す
-		return null;
+	    return new Route(stationList.subList(0,i+1),lineList.subList(0,i));
 	}
 	public Route divideTail(int i){
 		//先頭からi番目の駅から下車駅までの経路を取り出す
-		return null;
+		 return new Route(stationList.subList(i,stationList.size()),lineList.subList(i,lineList.size()));
 	}
 	public void join(Route r){
+		stationList.addAll(r.getStationsList());
+		lineList.addAll(r.getLinesList());
 		//このRouteの後ろに、引数rの経路を連結する。
 		//この経路の下車駅と、rの乗車駅が同じであることが条件
 	}
