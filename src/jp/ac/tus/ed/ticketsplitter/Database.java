@@ -22,6 +22,11 @@ public class Database {
 	public static final int FARE_HOKKAIDO_LOCAL=2; // 北海道地方交通線
 	public static final int FARE_HONSYU_TRUNK=3; // 本州幹線
 	public static final int FARE_HONSYU_LOCAL=4; // 本州地方交通線
+	public static final int FARE_SHIKOKU_TRUNK=5; // 四国幹線
+	public static final int FARE_SHIKOKU_LOCAL=6; // 四国地方交通線
+	public static final int FARE_KYUSYU_TRUNK=7; // 九州幹線
+	public static final int FARE_KYUSYU_LOCAL=8; // 九州地方交通線
+	
 	//・・・
 	public static final int FARE_YAMANOTE=11;
 	public static final int FARE_OSAKA_KANJO=12;
@@ -135,20 +140,26 @@ public class Database {
 	
 	//データベース内のすべての駅情報をリストで返す
 	public static HashMap<Integer,Station> getAllStations(){
-		int i = 0;
-		int id = 0;
-		Station stn = new Station();
-		if(stationMap!=null){
-			// メモの内容を記述：最初にすべての駅データを取り出す
-			while(i < （tableの大きさ)){
-				stn = getStation(id);
-				stationMap.put(i, stn);
-				i++;
+		try {
+			int Id = 0;
+			Station stn = new Station();
+			String sql = "select * from station";
+			ResultSet rs = statement.executeQuery(sql);
+			
+			if(stationMap==null){
+				// メモの内容を記述：最初にすべての駅データを取り出す
+				while( rs.next()){
+					int id =  rs.getInt("id");
+					Station st = getStationFromDb(id);
+					for(int i : st.getStationIdOfLine()){
+						stationMap.put(i, st);
+					}
+				}
 			}
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
 		}
-		
-		
-		
 		
 		return stationMap;
 	}
@@ -229,8 +240,10 @@ public class Database {
 					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HONSYU);
 				}else if(rs.getString("area").equals("北海道")){
 					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_HOKKAIDO);
-				}else if(rs.getString("area").equals("四国九州")){
-					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_SIKOKU_KYUSYU);
+				}else if(rs.getString("area").equals("四国")){
+					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_SHIKOKU);
+				}else if(rs.getString("area").equals("九州")){
+					return new Line(rs.getInt("id"),rs.getString("name"),rs.getBoolean("trunk"),Line.AREA_KYUSYU);
 				}
 			}
 		} catch (SQLException e) {
@@ -267,6 +280,7 @@ public class Database {
 			case FARE_SPECIFIC_TOKYO:
 				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='東京電車特定区間'";
 				break;
+			//他の運賃表の場合も追加する！！
 		}
 		//System.out.println(sql);
 		try {

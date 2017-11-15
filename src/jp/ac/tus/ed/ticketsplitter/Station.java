@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class Station {
 	//特定都区市内
 	public static final int CITY_SAPPORO=1;
@@ -49,6 +50,7 @@ public class Station {
 	}
 	public int getStationId(){
 	//駅ID。乗換可能駅であればその共通のID、すなわちDBのid_station
+		
 		return id;
 	}
 	void setStationIdOfLine(int line,int station){
