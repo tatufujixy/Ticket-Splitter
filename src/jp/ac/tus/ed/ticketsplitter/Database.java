@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +134,6 @@ public class Database {
 				}else if(suburbArea.equals("大阪")){
 					sta.setSuburbArea(Station.SUBURB_OSAKA);
 				}/*他の条件も後で追加*/
-				
 				sta.setDistance(line, new BigDecimal(rs.getString("distance")));
 			}while(rs.next());
 		} catch (SQLException e){
@@ -145,22 +145,31 @@ public class Database {
 	
 	//データベース内のすべての駅情報をリストで返す
 	public static HashMap<Integer,Station> getAllStations(){
+		if(stationMap!=null){
+			return stationMap;
+		}
+		
 		try {
-			int Id = 0;
-			Station stn = new Station();
 			String sql = "select * from station";
-			ResultSet rs = statement.executeQuery(sql);
+			ResultSet rs=statement.executeQuery(sql);
 			
-			if(stationMap==null){
-				// メモの内容を記述：最初にすべての駅データを取り出す
-				stationMap=new HashMap<Integer,Station>();
-				while( rs.next()){
-					int id =  rs.getInt("id");
-					Station st = getStationFromDb(id);
-					for(int i : st.getStationIdOfLine()){
-						stationMap.put(i, st);
-					}
+			// メモの内容を記述：最初にすべての駅データを取り出す
+			stationMap=new HashMap<Integer,Station>();
+			
+			List<Integer> idList=new ArrayList<Integer>(1000);
+			while(rs.next()){
+				
+				idList.add(rs.getInt("id"));
+			}
+			
+			for(int id:idList){
+				//int id =  rs.getInt("id");
+				//rs.getString("name");
+				Station st = getStationFromDb(id);
+				for(int i : st.getStationIdOfLine()){
+					stationMap.put(i, st);
 				}
+				
 			}
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック

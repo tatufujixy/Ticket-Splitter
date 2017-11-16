@@ -76,7 +76,6 @@ public class TicketSplitter {
 		processingstations_lineids = processingSta.getLineId();
 		//その駅のマップを取り出す。取り出した路線idをもとに隣接駅をマップから取り出す。
 		processingstations_map = processingSta.nextStationId();//戻り値がマップの形
-		 
 		for(int processing_lineid : processingstations_lineids){
 			 //ある路線の、隣接駅をすべて抜き出しノードにする。取り出した路線idは消す。
 			

@@ -244,7 +244,6 @@ public class FareCalculator {
 		}
 		
 		
-		
 		if(startAreaPass && destAreaPass){
 			//乗車駅・下車駅の両側が特定都区市内による経路変更の対象
 			Route devided=r.divideHead(dest_i).divideTail(start_i);
@@ -326,7 +325,7 @@ public class FareCalculator {
 		return false;
 	}
 	
-	
+	/*
 	private Route cutStartArea(Route r,int area){
 		//乗車駅側の特定都区市内・山手線内の経路を取り除く
 		List<Station> list=r.getStationsList();
@@ -369,4 +368,5 @@ public class FareCalculator {
 		//ここまで来ないはず
 		return r;
 	}
+	*/
 }
