@@ -153,6 +153,7 @@ public class Database {
 			
 			if(stationMap==null){
 				// メモの内容を記述：最初にすべての駅データを取り出す
+				stationMap=new HashMap<Integer,Station>();
 				while( rs.next()){
 					int id =  rs.getInt("id");
 					Station st = getStationFromDb(id);

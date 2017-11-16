@@ -36,29 +36,17 @@ public class FareCalculator {
 		String start=null,dest=null;
 		
 		FareCalculationRoute(Route r) {
-			super(r.getStationsList(), r.getLinesList());
+			super(r);
 		}
 		
-		void setStartStation(String s){
-			start=s;
-		}
-		void setDestinationStation(String s){
-			dest=s;
-		}
-		String getStartStation(){
-			return start;
-		}
-		String getDestinationStation(){
-			return dest;
-		}
 	}
 	
 	
-	public Ticket calculate(Route r){
+	public Ticket calculate(Route route){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
 		//System.out.println(r.getDistance());
 		
-		r=getFareCalculationRoute(r);
+		FareCalculationRoute r=getFareCalculationRoute(route);
 		
 		RouteInformation ri=getInformation(r);
 		
@@ -87,7 +75,7 @@ public class FareCalculator {
 					.add(ri.areaDistance.get(Line.AREA_SHIKOKU))
 					.add(ri.areaDistance.get(Line.AREA_KYUSYU)));
 			
-			//!!!!!!さらに加算額もfareに追加する!!!!!!!
+			//さらに加算額もfareに追加する
 			if(ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)!=0){
 				fare+=Database.getFare(Database.ADDITIONAL_FARE_HOKKAIDO,ri.areaDistance.get(Line.AREA_HOKKAIDO));
 			}
@@ -165,7 +153,7 @@ public class FareCalculator {
 		
 		fare+=Database.getAdditionalFare(r);
 		
-		return new Ticket(r,fare);
+		return new Ticket(r,fare,r.start,r.dest);
 	}
 	
 	RouteInformation getInformation(Route r){
@@ -219,47 +207,90 @@ public class FareCalculator {
 		//特定都区市内・山手線内による運賃計算経路を求める
 		List<Station> stationsList=r.getStationsList();
 		
-		boolean startAreaPass=stationsList.get(0).getSpecificArea()!=0
-				&& existsPassage(r,stationsList.get(0).getSpecificArea());
-		boolean destAreaPass=stationsList.get(stationsList.size()-1).getSpecificArea()!=0
-				&& existsPassage(r,stationsList.get(stationsList.size()-1).getSpecificArea());
+		//まず特定都区市内から
 		
-		int start_i=0,dest_i=0;
+		//乗車駅・下車駅側で特定都区市内が適用されうるならtrue
+		boolean startAreaPass=stationsList.get(0).getSpecificArea()!=0
+				&& !existsPassage(r,stationsList.get(0).getSpecificArea());
+		boolean destAreaPass=stationsList.get(stationsList.size()-1).getSpecificArea()!=0
+				&& !existsPassage(r,stationsList.get(stationsList.size()-1).getSpecificArea());
+		
+		//エリアの	出口駅・入口駅を求める
+		int start_i=0,dest_i=0;//出口駅・入口駅のインデックス
+		Station start = null,dest=null;//乗下車駅のエリアの中心駅
+		Route startAreaRoute=null,destAreaRoute=null;//中心駅から出入り口駅までのルート
 		if(startAreaPass){
 			int area=stationsList.get(0).getSpecificArea();
-			for(int i=0;i<stationsList.size();i++){
+			for(int i=1;i<stationsList.size();i++){
 				if(stationsList.get(i).getSpecificArea()!=area){
-					start_i=i;
+					start_i=i-1;
 					break;
 				}
 			}
+			
+			start=Database.getCentralStationOfWardsAndCities(stationsList.get(0).getSpecificWardsAndCities());
+			startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
 		}
 		if(destAreaPass){
 			int area=stationsList.get(stationsList.size()-1).getSpecificArea();
-			for(int i=stationsList.size()-1;i>=0;i--){
+			for(int i=stationsList.size()-2;i>=0;i--){
 				if(stationsList.get(i).getSpecificArea()!=area){
-					dest_i=i;
+					dest_i=i+1;
 					break;
 				}
 			}
+			dest=Database.getCentralStationOfWardsAndCities(stationsList.get(stationsList.size()-1).getSpecificWardsAndCities());
+			destAreaRoute=TicketSplitter.dijkstra(stationsList.get(dest_i), dest);
 		}
+		
+		
 		
 		if(startAreaPass && destAreaPass){
 			//乗車駅・下車駅の両側が特定都区市内による経路変更の対象
 			Route devided=r.divideHead(dest_i).divideTail(start_i);
 			
+			Route route=new Route(startAreaRoute);
+			route.join(devided);
+			route.join(destAreaRoute);
 			
-			
-			
+			if(route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("201"))>=0){
+				FareCalculationRoute returnRoute=new FareCalculationRoute(route);
+				returnRoute.start=Station.getSpecificWardsAndCitiesString(start.getSpecificWardsAndCities());
+				returnRoute.dest=Station.getSpecificWardsAndCitiesString(dest.getSpecificWardsAndCities());
+				return returnRoute;
+			}
 		}
 		if(startAreaPass){
+			Route devided=r.divideTail(start_i);
 			
+			Route route=new Route(startAreaRoute);
+			route.join(devided);
+			
+			if(route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("201"))>=0){
+				FareCalculationRoute returnRoute=new FareCalculationRoute(route);
+				returnRoute.start=Station.getSpecificWardsAndCitiesString(start.getSpecificWardsAndCities());
+				return returnRoute;
+			}
 		}
 		if(destAreaPass){
+			Route devided=r.divideHead(dest_i);
 			
+			Route route=new Route(devided);
+			route.join(destAreaRoute);
+			
+			if(route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("201"))>=0){
+				FareCalculationRoute returnRoute=new FareCalculationRoute(route);
+				returnRoute.dest=Station.getSpecificWardsAndCitiesString(dest.getSpecificWardsAndCities());
+				return returnRoute;
+			}
 		}
 		
-		return null;
+		
+		
+		//!!!!!!!!!!!!!次に山手線内!!!!!!!!!!!!!!
+		
+		
+		return new FareCalculationRoute(r);
 	}
 	
 	

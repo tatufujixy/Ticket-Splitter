@@ -135,4 +135,20 @@ public class Station {
 		Station sta=(Station)o;
 		return sta.id==this.id;
 	}
+	
+	
+	
+	static String getSpecificWardsAndCitiesString(int area){
+		switch(area){
+		case Station.CITY_TOKYO:
+			return "東京都区内";
+		case Station.CITY_YOKOHAMA:
+			return "横浜市内";
+		case Station.CITY_SAPPORO:
+			return "札幌市内";
+		default:
+			return null;
+		}
+	}
+	
 }

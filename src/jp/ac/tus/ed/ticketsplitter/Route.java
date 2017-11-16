@@ -11,6 +11,11 @@ public class Route {
 	private BigDecimal distance=BigDecimal.ZERO;
 	
 	//コンストラクタはTicketSplitter(、FareCalculator)で呼ばれる
+	public Route(Route r){
+		stationList.addAll(r.stationList);
+		lineList.addAll(r.lineList);
+		distance=r.distance;
+	}
 	public Route(List<Station> sta,List<Line> line){
 		stationList.addAll(sta);
 		lineList.addAll(line);
@@ -38,6 +43,8 @@ public class Route {
 	public void join(Route r){
 		stationList.addAll(r.getStationsList());
 		lineList.addAll(r.getLinesList());
+		
+		distance=distance.add(r.distance);
 		//このRouteの後ろに、引数rの経路を連結する。
 		//この経路の下車駅と、rの乗車駅が同じであることが条件
 	}

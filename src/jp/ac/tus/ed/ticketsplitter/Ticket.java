@@ -3,11 +3,18 @@ package jp.ac.tus.ed.ticketsplitter;
 public class Ticket {
 	private Route route;
 	private int fare;
+	private String start;
+	private String dest;
 	
 	//コンストラクタはFareCalculatorで呼ばれる
-	public Ticket(Route r, int fare){
+	public Ticket(Route r, int fare,String start,String dest){
 		route=r;
 		this.fare=fare;
+		
+		this.start= start!=null && !start.equals("") ? start 
+				: r.getStationsList().get(0).getName();
+		this.dest= dest!=null && !dest.equals("") ? dest 
+				: r.getStationsList().get(r.getStationsList().size()-1).getName();
 	}
 	public Route getRoute(){
 	//この乗車券のRouteを返す
@@ -17,4 +24,13 @@ public class Ticket {
 	//この乗車券の運賃を返す
 		return fare;
 	}
+	
+	//乗下車駅（特定都区市内など含む）を返す
+	public String getStart(){
+		return start;
+	}
+	public String getDestination(){
+		return dest;
+	}
+	
 }
