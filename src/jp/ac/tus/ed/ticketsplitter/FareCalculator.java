@@ -92,8 +92,7 @@ public class FareCalculator {
 				//幹線のみ
 				fare=Database.getFare(Database.FARE_HOKKAIDO_TRUNK,r.getDistance());
 			}else if(ri.containTrunk){
-				//地交線のみ
-				if(r.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("10"))<0){
+				if(r.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(BigDecimal.TEN)<=0){
 					//10km以下なら地方交通線運賃で計算
 					fare=Database.getFare(Database.FARE_HOKKAIDO_LOCAL,r.getDistance());
 				}else{
@@ -101,6 +100,7 @@ public class FareCalculator {
 					fare=Database.getFare(Database.FARE_HOKKAIDO_TRUNK,ri.areaDistance.get(Line.AREA_HOKKAIDO));
 				}
 			}else{
+				//地交線のみ
 				fare=Database.getFare(Database.FARE_HOKKAIDO_LOCAL,r.getDistance());
 			}
 		}else if(ri.areaDistance.get(Line.AREA_HONSYU).compareTo(BigDecimal.ZERO)==1){
@@ -108,7 +108,7 @@ public class FareCalculator {
 			if(ri.allTrunk){
 				fare=Database.getFare(Database.FARE_HONSYU_TRUNK,r.getDistance());
 			}else if(ri.containTrunk){
-				if(r.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("10"))<0){
+				if(r.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(BigDecimal.TEN)<=0){
 					//10km以下なら地方交通線運賃で計算
 					fare=Database.getFare(Database.FARE_HONSYU_LOCAL,r.getDistance());
 				}else{
@@ -122,7 +122,7 @@ public class FareCalculator {
 			if(ri.allTrunk){
 				fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK,r.getDistance());
 			}else if(ri.containTrunk){
-				//特定運賃に該当するか調べる！！！
+				//特定運賃に該当するか調べる
 				fare=Database.getTrunkAndLocalSpecificFare(ri.areaDistance.get(Line.AREA_SHIKOKU), r.getDistance(), Line.AREA_SHIKOKU);
 				if(fare==-1){
 					fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK,ri.areaDistance.get(Line.AREA_SHIKOKU));
@@ -138,7 +138,7 @@ public class FareCalculator {
 			if(ri.allTrunk){
 				fare=Database.getFare(Database.FARE_KYUSYU_TRUNK,r.getDistance());
 			}else if(ri.containTrunk){
-				//特定運賃に該当するか調べる！！！
+				//特定運賃に該当するか調べる
 				fare=Database.getTrunkAndLocalSpecificFare(ri.areaDistance.get(Line.AREA_KYUSYU), r.getDistance(), Line.AREA_KYUSYU);
 				if(fare==-1){
 					fare=Database.getFare(Database.FARE_KYUSYU_TRUNK,ri.areaDistance.get(Line.AREA_KYUSYU));
