@@ -51,9 +51,12 @@ public class FareCalculator {
 		RouteInformation ri=getInformation(r);
 		
 		int fare=0;
-		/*if(//特定区間運賃が適用されるとき){
-			
-		}else */if(ri.inYamanoteLine){
+		
+		List<Station> stationsList=r.getStationsList();
+		fare=Database.getSpecificSectionFare(stationsList.get(0),stationsList.get(stationsList.size()-1));
+		if(fare==0){
+			//特定区間運賃
+		}else if(ri.inYamanoteLine){
 			fare=Database.getFare(Database.FARE_YAMANOTE, r.getDistance());
 		}else if(ri.inOsakaKanjoLine){
 			fare=Database.getFare(Database.FARE_OSAKA_KANJO, r.getDistance());
@@ -287,6 +290,84 @@ public class FareCalculator {
 		
 		
 		//!!!!!!!!!!!!!次に山手線内!!!!!!!!!!!!!!
+		
+		//乗車駅・下車駅側で山手線内が適用されうるならtrue
+		startAreaPass=stationsList.get(0).isInYamanoteLine()
+				&& !existsPassage(r,yamanote);
+		destAreaPass=stationsList.get(stationsList.size()-1).isInYamanoteLine()
+				&& !existsPassage(r,yamanote);
+		
+		//エリアの	出口駅・入口駅を求める
+		start_i=0;
+		dest_i=0;//出口駅・入口駅のインデックス
+		start = null;
+		dest=null;//乗下車駅のエリアの中心駅
+		startAreaRoute=null;
+		destAreaRoute=null;//中心駅から出入り口駅までのルート
+		if(startAreaPass){
+			for(int i=1;i<stationsList.size();i++){
+				if(!stationsList.get(i).isInYamanoteLine()){
+					start_i=i-1;
+					break;
+				}
+			}
+			
+			start=Database.getCentralStationOfYamanoteLine();
+			startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
+		}
+		if(destAreaPass){
+			for(int i=stationsList.size()-2;i>=0;i--){
+				if(stationsList.get(i).isInYamanoteLine()){
+					dest_i=i+1;
+					break;
+				}
+			}
+			dest=Database.getCentralStationOfYamanoteLine();
+			destAreaRoute=TicketSplitter.dijkstra(stationsList.get(dest_i), dest);
+		}
+		
+		String inYamanote="東京山手線内";
+		if(startAreaPass && destAreaPass){
+			//乗車駅・下車駅の両側が山手内による経路変更の対象
+			Route devided=r.divideHead(dest_i).divideTail(start_i);
+			
+			Route route=new Route(startAreaRoute);
+			route.join(devided);
+			route.join(destAreaRoute);
+			
+			if(route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("101"))>=0 
+					&& route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("200"))<=0){
+				FareCalculationRoute returnRoute=new FareCalculationRoute(route);
+				returnRoute.dest=returnRoute.start=inYamanote;
+				return returnRoute;
+			}
+		}
+		if(startAreaPass){
+			Route devided=r.divideTail(start_i);
+			
+			Route route=new Route(startAreaRoute);
+			route.join(devided);
+			
+			if(route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("101"))>=0 
+					&& route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("200"))<=0){
+				FareCalculationRoute returnRoute=new FareCalculationRoute(route);
+				returnRoute.start=inYamanote;
+				return returnRoute;
+			}
+		}
+		if(destAreaPass){
+			Route devided=r.divideHead(dest_i);
+			
+			Route route=new Route(devided);
+			route.join(destAreaRoute);
+			
+			if(route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("101"))>=0 
+					&& route.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(new BigDecimal("200"))<=0){
+				FareCalculationRoute returnRoute=new FareCalculationRoute(route);
+				returnRoute.dest=inYamanote;
+				return returnRoute;
+			}
+		}
 		
 		
 		return new FareCalculationRoute(r);
