@@ -51,19 +51,25 @@ public class FareCalculator {
 		RouteInformation ri=getInformation(r);
 		
 		int fare=0;
+		String fareCategory="";
 		
 		List<Station> stationsList=r.getStationsList();
 		fare=Database.getSpecificSectionFare(stationsList.get(0),stationsList.get(stationsList.size()-1));
 		if(fare==0){
 			//特定区間運賃
+			fareCategory="特定区間運賃("+stationsList.get(0).getName()+"・"+stationsList.get(stationsList.size()-1).getName()+")";
 		}else if(ri.inYamanoteLine){
 			fare=Database.getFare(Database.FARE_YAMANOTE, r.getDistance());
+			fareCategory="山手線";
 		}else if(ri.inOsakaKanjoLine){
 			fare=Database.getFare(Database.FARE_OSAKA_KANJO, r.getDistance());
+			fareCategory="大阪環状線";
 		}else if(ri.specificArea==Station.SPECIFIC_TOKYO){
 			fare=Database.getFare(Database.FARE_SPECIFIC_TOKYO, r.getDistance());
+			fareCategory="東京特定区間";
 		}else if(ri.specificArea==Station.SPECIFIC_OSAKA){
 			fare=Database.getFare(Database.FARE_SPECIFIC_OSAKA, r.getDistance());
+			fareCategory="大阪特定区間";
 		}else if(
 				ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)
 				+ri.areaDistance.get(Line.AREA_HONSYU).compareTo(BigDecimal.ZERO)
@@ -77,7 +83,7 @@ public class FareCalculator {
 					.add(ri.areaDistance.get(Line.AREA_HONSYU))
 					.add(ri.areaDistance.get(Line.AREA_SHIKOKU))
 					.add(ri.areaDistance.get(Line.AREA_KYUSYU)));
-			
+			fareCategory="複数エリア跨り";
 			//さらに加算額もfareに追加する
 			if(ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)!=0){
 				fare+=Database.getFare(Database.ADDITIONAL_FARE_HOKKAIDO,ri.areaDistance.get(Line.AREA_HOKKAIDO));
@@ -94,69 +100,87 @@ public class FareCalculator {
 			if(ri.allTrunk){
 				//幹線のみ
 				fare=Database.getFare(Database.FARE_HOKKAIDO_TRUNK,r.getDistance());
+				fareCategory="北海道幹線";
 			}else if(ri.containTrunk){
 				if(r.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(BigDecimal.TEN)<=0){
 					//10km以下なら地方交通線運賃で計算
 					fare=Database.getFare(Database.FARE_HOKKAIDO_LOCAL,r.getDistance());
+					fareCategory="北海道地方交通線(幹線区間含む)";
 				}else{
 					//両方含む
 					fare=Database.getFare(Database.FARE_HOKKAIDO_TRUNK,ri.areaDistance.get(Line.AREA_HOKKAIDO));
+					fareCategory="北海道幹線";
 				}
 			}else{
 				//地交線のみ
 				fare=Database.getFare(Database.FARE_HOKKAIDO_LOCAL,r.getDistance());
+				fareCategory="北海道地方交通線";
 			}
 		}else if(ri.areaDistance.get(Line.AREA_HONSYU).compareTo(BigDecimal.ZERO)==1){
 			//本州のみ
 			if(ri.allTrunk){
 				fare=Database.getFare(Database.FARE_HONSYU_TRUNK,r.getDistance());
+				fareCategory="本州幹線";
 			}else if(ri.containTrunk){
 				if(r.getDistance().setScale(0, BigDecimal.ROUND_UP).compareTo(BigDecimal.TEN)<=0){
 					//10km以下なら地方交通線運賃で計算
 					fare=Database.getFare(Database.FARE_HONSYU_LOCAL,r.getDistance());
+					fareCategory="本州地方交通線(幹線含む)";
 				}else{
 					fare=Database.getFare(Database.FARE_HONSYU_TRUNK,ri.areaDistance.get(Line.AREA_HOKKAIDO));
+					fareCategory="本州幹線";
 				}
 			}else{
 				fare=Database.getFare(Database.FARE_HONSYU_LOCAL,r.getDistance());
+				fareCategory="本州地方交通線";
 			}
 		}else if(ri.areaDistance.get(Line.AREA_SHIKOKU).compareTo(BigDecimal.ZERO)==1){
 			//四国のみ
 			if(ri.allTrunk){
 				fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK,r.getDistance());
+				fareCategory="四国幹線";
 			}else if(ri.containTrunk){
 				//特定運賃に該当するか調べる
 				fare=Database.getTrunkAndLocalSpecificFare(ri.areaDistance.get(Line.AREA_SHIKOKU), r.getDistance(), Line.AREA_SHIKOKU);
+				fareCategory="特定運賃(四国幹線・地方交通線)";
 				if(fare==-1){
 					fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK,ri.areaDistance.get(Line.AREA_SHIKOKU));
+					fareCategory="四国幹線";
 				}
 			}else{
 				fare=Database.getLocalSpecificFare(ri.areaDistance.get(Line.AREA_SHIKOKU),r.getDistance(),Line.AREA_SHIKOKU);
+				fareCategory="特定運賃(四国地方交通線)";
 				if(fare==-1){
 					fare=Database.getFare(Database.FARE_SHIKOKU_TRUNK,ri.areaDistance.get(Line.AREA_SHIKOKU));
+					fareCategory="四国幹線";
 				}
 			}
 		}else{
 			//九州のみ
 			if(ri.allTrunk){
 				fare=Database.getFare(Database.FARE_KYUSYU_TRUNK,r.getDistance());
+				fareCategory="九州幹線";
 			}else if(ri.containTrunk){
 				//特定運賃に該当するか調べる
 				fare=Database.getTrunkAndLocalSpecificFare(ri.areaDistance.get(Line.AREA_KYUSYU), r.getDistance(), Line.AREA_KYUSYU);
+				fareCategory="特定運賃(九州幹線・地方交通線)";
 				if(fare==-1){
 					fare=Database.getFare(Database.FARE_KYUSYU_TRUNK,ri.areaDistance.get(Line.AREA_KYUSYU));
+					fareCategory="九州幹線";
 				}
 			}else{
 				fare=Database.getLocalSpecificFare(ri.areaDistance.get(Line.AREA_KYUSYU),r.getDistance(),Line.AREA_KYUSYU);
+				fareCategory="特定運賃(九州地方交通線)";
 				if(fare==-1){
 					fare=Database.getFare(Database.FARE_KYUSYU_TRUNK,ri.areaDistance.get(Line.AREA_KYUSYU));
+					fareCategory="九州幹線";
 				}
 			}
 		}
 		
 		fare+=Database.getAdditionalFare(r);
 		
-		return new Ticket(r,fare,r.start,r.dest);
+		return new Ticket(r,fare,r.start,r.dest,fareCategory);
 	}
 	
 	RouteInformation getInformation(Route r){
@@ -406,48 +430,4 @@ public class FareCalculator {
 		return false;
 	}
 	
-	/*
-	private Route cutStartArea(Route r,int area){
-		//乗車駅側の特定都区市内・山手線内の経路を取り除く
-		List<Station> list=r.getStationsList();
-		for(int i=1;i<list.size();i++){
-			switch(area){
-				case yamanote:
-					if(!list.get(i).isInYamanoteLine()){
-						return r.divideTail(i-1);
-					}
-					break;
-				default:
-					if(list.get(i).getSpecificWardsAndCities()!=area){
-						return r.divideTail(i-1);
-					}
-					break;
-			}
-		}
-		
-		//ここまで来ないはず
-		return r;
-	}
-	private Route cutDestinationArea(Route r,int area){
-		//下車駅側の特定都区市内・山手線内の経路を取り除く
-		List<Station> list=r.getStationsList();
-		for(int i=list.size()-2;i>=0;i--){
-			switch(area){
-				case yamanote:
-					if(!list.get(i).isInYamanoteLine()){
-						return r.divideHead(i+1);
-					}
-					break;
-				default:
-					if(list.get(i).getSpecificWardsAndCities()!=area){
-						return r.divideHead(i+1);
-					}
-					break;
-			}
-		}
-		
-		//ここまで来ないはず
-		return r;
-	}
-	*/
 }

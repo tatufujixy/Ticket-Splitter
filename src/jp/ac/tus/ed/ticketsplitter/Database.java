@@ -381,7 +381,8 @@ public class Database {
 		
 		for(Ticket t:list){
 			Route r=t.getRoute();
-			System.out.println("運賃:"+t.getFare()+"円");
+			System.out.println(t.getStart()+" -> "+t.getDestination());
+			System.out.println("運賃:"+t.getFare()+"円 ("+t.getFareCategory()+")");
 			System.out.print("経路 : ");
 			for(String str : r.via()){
 				System.out.print(str+"  ");
