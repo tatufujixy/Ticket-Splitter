@@ -5,9 +5,16 @@ public class Ticket {
 	private int fare;
 	private String start;
 	private String dest;
+	private String fareCategory;
+	
+	
 	
 	//コンストラクタはFareCalculatorで呼ばれる
+	
 	public Ticket(Route r, int fare,String start,String dest){
+		this(r, fare,start,dest,null);
+	}
+	public Ticket(Route r, int fare,String start,String dest,String category){
 		route=r;
 		this.fare=fare;
 		
@@ -15,6 +22,7 @@ public class Ticket {
 				: r.getStationsList().get(0).getName();
 		this.dest= dest!=null && !dest.equals("") ? dest 
 				: r.getStationsList().get(r.getStationsList().size()-1).getName();
+		fareCategory=category;
 	}
 	public Route getRoute(){
 	//この乗車券のRouteを返す
@@ -33,4 +41,7 @@ public class Ticket {
 		return dest;
 	}
 	
+	public String getFareCategory(){
+		return fareCategory;
+	}
 }
