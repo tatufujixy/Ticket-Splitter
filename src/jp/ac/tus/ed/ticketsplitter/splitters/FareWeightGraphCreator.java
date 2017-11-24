@@ -26,7 +26,8 @@ public class FareWeightGraphCreator {
 	static Connection conn = null;
 	static Statement statement = null;
 	
-	//int start_id, dest_id, fare;
+	//Set<Station> stationSet = new HashSet<Station>(Database.getAllStations().values());
+	//List<Station> stationList = new ArrayList<Station>(stationSet);
 	
 	static void createDatabase(){
 		//最初に呼ぶメソッド
@@ -90,8 +91,10 @@ public class FareWeightGraphCreator {
 	}
 	
 	// mainクラス
-	public static void main(/*String[] args*/) /*throws IOException*/{
+	public static void main(){
 		// TODO 自動生成されたメソッド・スタブ
+		
+		
 		
 		//BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
