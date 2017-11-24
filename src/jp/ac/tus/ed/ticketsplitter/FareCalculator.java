@@ -203,7 +203,7 @@ public class FareCalculator {
 			Station back=stations.get(i-1);
 			ri.inYamanoteLine=ri.inYamanoteLine && sta.isInYamanoteLine();
 			ri.inOsakaKanjoLine=ri.inOsakaKanjoLine && sta.isInOsakaKanjoLine();
-			if(ri.specificArea!=sta.getSpecificArea()){
+			if(ri.specificArea!=0 &&ri.specificArea!=sta.getSpecificArea()){
 				ri.specificArea=0;
 			}
 			

@@ -347,7 +347,7 @@ public class Database {
 			if(rs.next()){
 				fare = rs.getInt("fare");
 			}else{
-				System.out.println("運賃が見つからない");
+				System.out.println("運賃が見つからない :area="+area+", distance="+distance);
 			}
 			
 		} catch (SQLException e) {
