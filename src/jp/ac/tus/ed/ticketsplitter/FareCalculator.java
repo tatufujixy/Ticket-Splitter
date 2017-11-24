@@ -52,6 +52,10 @@ public class FareCalculator {
 		
 		int fare=0;
 		String fareCategory="";
+		/*if(r.getDistance().compareTo(BigDecimal.ZERO)==0){
+			System.out.println("ゼロ経路");
+			return null;
+		}*/
 		
 		List<Station> stationsList=r.getStationsList();
 		fare=Database.getSpecificSectionFare(stationsList.get(0),stationsList.get(stationsList.size()-1));
