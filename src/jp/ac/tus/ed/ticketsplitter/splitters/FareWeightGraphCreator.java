@@ -94,7 +94,7 @@ public class FareWeightGraphCreator {
 	public static void main(){
 		// TODO 自動生成されたメソッド・スタブ
 		
-		
+		createDatabase();
 		
 		//BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
