@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitter;
+import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitterTree;
 
 public class Database {
 	//運賃エリア(TRUNK:幹線   LOCAL:地方交通線)
@@ -350,9 +351,6 @@ public class Database {
 		}
 		
 		
-		
-		
-		
 		return fare;
 	}
 
@@ -360,8 +358,6 @@ public class Database {
 	//特定区間運賃とかは中間発表後に実装すれば良いかと
 	
 	public static void main(String args[]) throws IOException{
-		//System.out.println(getStation("柏").getStationId());
-		//
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
 		Station start=null;
@@ -377,7 +373,7 @@ public class Database {
 			dest=Database.getStation(str);
 		}
 		
-		List<Ticket> list=TicketSplitter.getOptimizedTickets(start, dest);
+		List<Ticket> list=TicketSplitterTree.getOptimizedTickets(start, dest);
 		
 		for(Ticket t:list){
 			Route r=t.getRoute();
@@ -387,6 +383,7 @@ public class Database {
 			for(String str : r.via()){
 				System.out.print(str+"  ");
 			}
+			System.out.println("\n");
 		}
 		
 	}
