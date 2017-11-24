@@ -272,6 +272,9 @@ public class Database {
 		//s1とs2の間で特定区間運賃が設定されていればその運賃を返す
 		//設定されていなければ-1を返す
 		
+		
+		
+		
 		return -1;
 	}
 	
@@ -284,7 +287,9 @@ public class Database {
 	}
 	public static Station getCentralStationOfYamanoteLine(){
 		//山手線内の中心駅（東京駅）を返す
-		return null;
+		Station centralOfTokyo = new Station();
+		centralOfTokyo = getStation("東京");
+		return centralOfTokyo;
 	}
 	
 	public static int getAdditionalFare(Route r){
