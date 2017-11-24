@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import jp.ac.tus.ed.ticketsplitter.Database;
+import jp.ac.tus.ed.ticketsplitter.FareCalculator;
 import jp.ac.tus.ed.ticketsplitter.Route;
 import jp.ac.tus.ed.ticketsplitter.Station;
 
@@ -25,7 +26,8 @@ public class FareWeightGraphCreator {
 	static Connection conn = null;
 	static Statement statement = null;
 	
-	//int start_id, dest_id, fare;
+	//Set<Station> stationSet = new HashSet<Station>(Database.getAllStations().values());
+	//List<Station> stationList = new ArrayList<Station>(stationSet);
 	
 	static void createDatabase(){
 		//最初に呼ぶメソッド
@@ -41,22 +43,21 @@ public class FareWeightGraphCreator {
 	
 		for(int i=0;i<stationList.size();i++){
 			for(int j=0;j<stationList.size();j++){
-				/*
-				try{
-					//ResultSet rs1 = statement.executeQuery("select * from station where id = " + i);
-					//ResultSet rs2 = statement.executeQuery("select * from station where id = " + j);
-					//Station start = rs1.getStation("name");
-					//Station dest = rs2.getStation("name");
-					if(i != j){
-						//Route dijkstraroute = TicketSplitter.dijkstra(start, dest);
-						//fare = FareCalculator.calculator(dijkstraroute);
-					}else{
-						return;
+				if(i == j){
+					Station start = stationList.get(i);
+					Station dest = stationList.get(j);
+					Route dijkstraroute = TicketSplitter.dijkstra(start, dest);
+					int fare = new FareCalculator().calculate(dijkstraroute).getFare();
+					try{
+						ResultSet rs1 = statement.executeQuery("select id from station where name = " + start);
+						ResultSet rs2 = statement.executeQuery("select id from station where name = " + dest);
+						giveData(rs1.getInt("id"), rs2.getInt("id"), fare);
+					}catch(SQLException e){
+						e.printStackTrace();
 					}
-				}catch(SQLException e){
-					e.printStackTrace();
+				}else{
+					return;
 				}
-				*/
 			}
 		}
 		
@@ -90,8 +91,10 @@ public class FareWeightGraphCreator {
 	}
 	
 	// mainクラス
-	public static void main(String[] args) throws IOException{
+	public static void main(){
 		// TODO 自動生成されたメソッド・スタブ
+		
+		createDatabase();
 		
 		//BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		
