@@ -88,7 +88,7 @@ public class Database {
 	//idを指定してStationインスタンスを返す
 	//idは、stationテーブルにおけるid,id_stationのどちらでも良い
 		Station sta=new Station();
-		
+		System.out.println(id);
 		try {
 			statement.setQueryTimeout(30);
 			String sql = "select * from station where id="+id;
@@ -100,7 +100,7 @@ public class Database {
 			}
 			if(rs.getInt("id_station")!=0){
 				//乗り換え可能な駅のとき
-				rs=statement.executeQuery("select * from station where id_station="+id);
+				rs=statement.executeQuery("select * from station where id_station="+rs.getInt("id_station"));
 				rs.next();
 			}
 			do{

@@ -241,19 +241,22 @@ public class FareCalculator {
 		//まず特定都区市内から
 		
 		//乗車駅・下車駅側で特定都区市内が適用されうるならtrue
-		boolean startAreaPass=stationsList.get(0).getSpecificArea()!=0
-				&& !existsPassage(r,stationsList.get(0).getSpecificArea());
-		boolean destAreaPass=stationsList.get(stationsList.size()-1).getSpecificArea()!=0
-				&& !existsPassage(r,stationsList.get(stationsList.size()-1).getSpecificArea());
+		boolean startAreaPass=stationsList.get(0).getSpecificWardsAndCities()!=0
+				&& !existsPassage(r,stationsList.get(0).getSpecificWardsAndCities());
+		boolean destAreaPass=stationsList.get(stationsList.size()-1).getSpecificWardsAndCities()!=0
+				&& !existsPassage(r,stationsList.get(stationsList.size()-1).getSpecificWardsAndCities());
+		
+		
 		
 		//エリアの	出口駅・入口駅を求める
 		int start_i=0,dest_i=0;//出口駅・入口駅のインデックス
 		Station start = null,dest=null;//乗下車駅のエリアの中心駅
 		Route startAreaRoute=null,destAreaRoute=null;//中心駅から出入り口駅までのルート
 		if(startAreaPass){
-			int area=stationsList.get(0).getSpecificArea();
+			System.out.println("startAreaPass :"+stationsList.get(0).getName());
+			int area=stationsList.get(0).getSpecificWardsAndCities();
 			for(int i=1;i<stationsList.size();i++){
-				if(stationsList.get(i).getSpecificArea()!=area){
+				if(stationsList.get(i).getSpecificWardsAndCities()!=area){
 					start_i=i-1;
 					break;
 				}
@@ -263,9 +266,10 @@ public class FareCalculator {
 			startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
 		}
 		if(destAreaPass){
-			int area=stationsList.get(stationsList.size()-1).getSpecificArea();
+			System.out.println("destAreaPass :"+stationsList.get(stationsList.size()-1).getName());
+			int area=stationsList.get(stationsList.size()-1).getSpecificWardsAndCities();
 			for(int i=stationsList.size()-2;i>=0;i--){
-				if(stationsList.get(i).getSpecificArea()!=area){
+				if(stationsList.get(i).getSpecificWardsAndCities()!=area){
 					dest_i=i+1;
 					break;
 				}

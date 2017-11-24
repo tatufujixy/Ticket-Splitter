@@ -130,6 +130,11 @@ public class TicketSplitterTree {
 							searchRoute.addRoute(node.vialine,node.back.sta);
 							node=node.back;
 						}
+						for(Station s:searchRoute.getStationsList()){
+							System.out.print(s.getName()+" ");
+						}
+						System.out.println();
+						
 						for(int i=1;i<searchRoute.getStationsList().size();i++){
 							Ticket lastTicket=new FareCalculator().calculate(searchRoute.divideHead(i));
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
