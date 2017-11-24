@@ -41,9 +41,10 @@ public class FareWeightGraphCreator {
 	
 		for(int i=0;i<stationList.size();i++){
 			for(int j=0;j<stationList.size();j++){
+				/*
 				try{
-					ResultSet rs1 = statement.executeQuery("select * from station where id = " + i);
-					ResultSet rs2 = statement.executeQuery("select * from station where id = " + j);
+					//ResultSet rs1 = statement.executeQuery("select * from station where id = " + i);
+					//ResultSet rs2 = statement.executeQuery("select * from station where id = " + j);
 					//Station start = rs1.getStation("name");
 					//Station dest = rs2.getStation("name");
 					if(i != j){
@@ -55,6 +56,7 @@ public class FareWeightGraphCreator {
 				}catch(SQLException e){
 					e.printStackTrace();
 				}
+				*/
 			}
 		}
 		
