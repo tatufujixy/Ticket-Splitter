@@ -65,6 +65,7 @@ public class TicketSplitterTree {
 					LowestFareInformation nextStationInfo=fareMap.get(nextStation);
 					if(nextStationInfo!=null && nextStationInfo.isSettled()){
 						//すでにこの駅が確定リストにあるとき何もしない
+						//ループでないか確認する！！
 						TreeStaNode node=new TreeStaNode(nextStation,processing,Database.getLine(lineId));
 						//新しく作ったノード
 						unsettledList.add(node);
