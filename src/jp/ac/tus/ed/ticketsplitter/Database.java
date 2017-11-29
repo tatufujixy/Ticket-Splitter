@@ -269,8 +269,8 @@ public class Database {
 		return null;
 	}
 		
-	public static int getSpecificSectionFare(Station s1,Station s2){
-		//s1とs2の間で特定区間運賃が設定されていればその運賃を返す
+	public static int getSpecificSectionFare(Station s1,Station s2,BigDecimal distance){
+		//s1とs2の間、距離distanceで特定区間運賃が設定されていればその運賃を返す
 		//設定されていなければ-1を返す
 		
 		
@@ -288,9 +288,28 @@ public class Database {
 	}
 	public static Station getCentralStationOfYamanoteLine(){
 		//山手線内の中心駅（東京駅）を返す
-		Station centralOfTokyo = new Station();
-		centralOfTokyo = getStation("東京");
-		return centralOfTokyo;
+		int id_CentralOfYamanote;
+		Station centralOfYamanote = new Station();
+		String Yamanote = "山手線";
+		try{
+			statement.setQueryTimeout(30);
+			String sql = "select * from central_station_specific_wards_and_cities where name = " + Yamanote;
+			ResultSet rs=statement.executeQuery(sql);
+			
+			if(!rs.next()){//idをもつ駅が存在しない
+				System.out.println("not exist");
+				return null;
+			}
+			
+			id_CentralOfYamanote = rs.getInt("id");
+			
+		}catch(SQLException e){
+			e.printStackTrace();
+			return null;
+		}
+		
+		centralOfYamanote = getStation(id_CentralOfYamanote);
+		return centralOfYamanote;
 	}
 	
 	public static int getAdditionalFare(Route r){
