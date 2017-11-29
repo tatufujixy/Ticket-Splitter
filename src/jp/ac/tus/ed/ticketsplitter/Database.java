@@ -88,7 +88,7 @@ public class Database {
 	//idを指定してStationインスタンスを返す
 	//idは、stationテーブルにおけるid,id_stationのどちらでも良い
 		Station sta=new Station();
-		System.out.println(id);
+		//System.out.println(id);
 		try {
 			statement.setQueryTimeout(30);
 			String sql = "select * from station where id="+id;

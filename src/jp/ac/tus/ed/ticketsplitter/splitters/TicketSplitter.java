@@ -28,6 +28,10 @@ public class TicketSplitter {
 	}
 	
 	public static Route dijkstra(Station start,Station dest){
+		
+		System.out.println("dijkstra:"+start.getName()+"~"+dest.getName());
+		
+		
 		int startid = start.getStationId();
 	//ダイクストラ法により、start駅からdest駅までの経路を求める
 	//FareCalculatorから呼ばれるかも

@@ -44,7 +44,12 @@ public class FareCalculator {
 	
 	public Ticket calculate(Route route){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
-		//System.out.println(r.getDistance());
+		System.out.print("calculate : ");
+		for(Station s:route.getStationsList()){
+			System.out.print(s.getName()+" ");
+		}
+		System.out.println();
+		
 		
 		FareCalculationRoute r=getFareCalculationRoute(route);
 		
@@ -52,10 +57,7 @@ public class FareCalculator {
 		
 		int fare=0;
 		String fareCategory="";
-		/*if(r.getDistance().compareTo(BigDecimal.ZERO)==0){
-			System.out.println("ゼロ経路");
-			return null;
-		}*/
+		
 		
 		List<Station> stationsList=r.getStationsList();
 		fare=Database.getSpecificSectionFare(stationsList.get(0),stationsList.get(stationsList.size()-1),r.getDistance());
