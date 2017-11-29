@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import jp.ac.tus.ed.ticketsplitter.Database;
 import jp.ac.tus.ed.ticketsplitter.FareCalculator;
@@ -82,7 +84,7 @@ public class TicketSplitterTree {
 							//新しく作ったノード
 							unsettledList.add(node);
 						}
-						break;
+						
 						
 					}else if(nextStationInfo!=null && !nextStationInfo.isSettled()){
 						//この駅が未確定リストにあるとき
@@ -114,6 +116,30 @@ public class TicketSplitterTree {
 						
 						for(int i=searchStartIndex;i<searchRoute.getStationsList().size();i++){
 							Ticket lastTicket=new FareCalculator().calculate(searchRoute.divideHead(i));
+							
+							//折り返しの判定
+							Route gRoute=fareMap.get(searchRoute.getStationsList().get(i)).getRoute();//残りのルート
+							if(gRoute.getDistance().compareTo(BigDecimal.ZERO)!=0
+									&& gRoute.getStationsList().get(1).equals(searchRoute.getStationsList().get(i-1))
+									&& gRoute.getLinesList().get(0).equals(searchRoute.getLinesList().get(i-1))){
+								//折り返しあり
+								continue;
+							}
+							
+							//ループの判定
+							Set<Station> lastRouteStation=new HashSet<Station>(searchRoute.getStationsList().subList(0,i));
+							boolean loop=false;
+							for(Station s:gRoute.getStationsList()){
+								if(lastRouteStation.contains(s)){
+									//ループあり
+									loop=true;
+									break;
+								}
+							}
+							if(loop){
+								continue;
+							}
+							
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()){
 								nextStationInfo.setFare(fare);
@@ -152,6 +178,31 @@ public class TicketSplitterTree {
 						*/
 						for(int i=1;i<searchRoute.getStationsList().size();i++){
 							Ticket lastTicket=new FareCalculator().calculate(searchRoute.divideHead(i));
+							
+							//折り返しの判定
+							Route gRoute=fareMap.get(searchRoute.getStationsList().get(i)).getRoute();//残りのルート
+							if(gRoute.getDistance().compareTo(BigDecimal.ZERO)!=0
+									&& gRoute.getStationsList().get(1).equals(searchRoute.getStationsList().get(i-1))
+									&& gRoute.getLinesList().get(0).equals(searchRoute.getLinesList().get(i-1))){
+								//折り返しあり
+								continue;
+							}
+							
+							//ループの判定
+							Set<Station> lastRouteStation=new HashSet<Station>(searchRoute.getStationsList().subList(0,i));
+							boolean loop=false;
+							for(Station s:gRoute.getStationsList()){
+								if(lastRouteStation.contains(s)){
+									//ループあり
+									loop=true;
+									break;
+								}
+							}
+							if(loop){
+								continue;
+							}
+							
+							
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()){
 								nextStationInfo.setFare(fare);
