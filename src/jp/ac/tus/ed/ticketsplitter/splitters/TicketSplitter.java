@@ -80,6 +80,8 @@ public class TicketSplitter {
 		processingstations_lineids = processingSta.getLineId();
 		//その駅のマップを取り出す。取り出した路線idをもとに隣接駅をマップから取り出す。
 		processingstations_map = processingSta.nextStationId();//戻り値がマップの形
+		
+		//System.out.println(processingSta.getName());
 		for(int processing_lineid : processingstations_lineids){
 			 //ある路線の、隣接駅をすべて抜き出しノードにする。取り出した路線idは消す。
 			
@@ -91,8 +93,9 @@ public class TicketSplitter {
 			 nextstations = processingstations_map.get(processing_lineid);
 			 thisline = Database.getLine(processing_lineid);
 			 for(int newStationId : nextstations){
-				//駅を作成、それをもとにノードを作成し、unsettledに入れるかどうか確認後入れる。
+				 //駅を作成、それをもとにノードを作成し、unsettledに入れるかどうか確認後入れる。
 				newstation = Database.getStation(newStationId);
+				// System.out.println("new Station:"+newStationId);
 				//nextstations.remove(0);
 				//駅間の距離を算出し絶対値をつける
 				betweensta = ((processingStaNode.getSta()).getDistance(processing_lineid)).subtract(newstation.getDistance(processing_lineid));
