@@ -293,7 +293,7 @@ public class Database {
 		String Yamanote = "山手線";
 		try{
 			statement.setQueryTimeout(30);
-			String sql = "select * from central_station_specific_wards_and_cities where name = " + Yamanote;
+			String sql = "select * from central_station_specific_wards_and_cities where wards_and_cities = '" + Yamanote+"'";
 			ResultSet rs=statement.executeQuery(sql);
 			
 			if(!rs.next()){//idをもつ駅が存在しない
