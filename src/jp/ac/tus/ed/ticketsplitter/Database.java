@@ -88,7 +88,7 @@ public class Database {
 	//idを指定してStationインスタンスを返す
 	//idは、stationテーブルにおけるid,id_stationのどちらでも良い
 		Station sta=new Station();
-		//System.out.println(id);
+		System.out.println(id);
 		try {
 			statement.setQueryTimeout(30);
 			String sql = "select * from station where id="+id;
@@ -364,12 +364,6 @@ public class Database {
 	
 	public static void main(String args[]) throws IOException{
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		
-		
-		System.out.print("品川駅：");
-		for(int i:Database.getStationFromDb(151).getStationIdOfLine()){
-			System.out.print(i+" ");
-		}
 		
 		Station start=null;
 		while(start==null){

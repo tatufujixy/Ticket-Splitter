@@ -44,8 +44,6 @@ public class TicketSplitterTree {
 			Station processingStation=processing.sta;
 			fareMap.get(processingStation).setSettled(true);
 			
-			System.out.println("最安値確定:"+processingStation.getName());
-			
 			if(processingStation.equals(start)){
 				return fareMap.get(processingStation).getTicketList();
 			}
@@ -66,24 +64,11 @@ public class TicketSplitterTree {
 					int n;
 					LowestFareInformation nextStationInfo=fareMap.get(nextStation);
 					if(nextStationInfo!=null && nextStationInfo.isSettled()){
-						//すでにこの駅が確定リストにあるとき
+						//すでにこの駅が確定リストにあるとき何もしない
+						//ループでないか確認する！！
 						TreeStaNode node=new TreeStaNode(nextStation,processing,Database.getLine(lineId));
-						
-						//ループでないか確認
-						boolean loop=false;
-						while(node.back!=null){
-							if(node.sta.equals(node.sta)){
-								loop=true;
-								break;
-							}
-							node=node.back;
-						}
-						if(!loop){
-							//新しく作ったノード
-							unsettledList.add(node);
-						}
-						break;
-						
+						//新しく作ったノード
+						unsettledList.add(node);
 					}else if(nextStationInfo!=null && !nextStationInfo.isSettled()){
 						//この駅が未確定リストにあるとき
 						
@@ -92,26 +77,28 @@ public class TicketSplitterTree {
 						
 						unsettledList.add(node);
 						
+						int searchStartIndex=0;
 						Route searchRoute=new Route(node.sta);
 						while(node.back!=null){//経路をまず求める
 							searchRoute.addRoute(node.vialine,node.back.sta);
 							node=node.back;
 						}
-						
-						int searchStartIndex=0;
-						for(int i=1;i<nextStationInfo.getRoute().getStationsList().size();i++){
+						/*あとで
+						for(int i=nextStationInfo.getRoute().getStationsList().size()-1;i>=0;i--){
 							//計算の省略
-							if(nextStationInfo.getRoute().getStationsList().get(i).equals(searchRoute.getStationsList().get(i))
-									&& nextStationInfo.getRoute().getLinesList().get(i-1).equals(searchRoute.getLinesList().get(i-1))){
+							if(nextStationInfo.getRoute().getStationsList().get(i).equals(node.sta)
+									&& nextStationInfo.getRoute().getLinesList().get(i-1).equals(node.vialine)){
 								//同じ駅と経路
-								searchStartIndex=i;
 							}else{
-								break;
+								searchStartIndex=i+1;
 							}
+							searchRoute.addRoute(node.vialine, node.back.sta);
+							
 							
 						}
+						*/
 						
-						for(int i=searchStartIndex;i<searchRoute.getStationsList().size();i++){
+						for(int i=0;i<searchRoute.getStationsList().size();i++){
 							Ticket lastTicket=new FareCalculator().calculate(searchRoute.divideHead(i));
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()){
@@ -119,7 +106,7 @@ public class TicketSplitterTree {
 								nextStationInfo.setRoute(searchRoute);
 								
 								List<Ticket> ticketList=new ArrayList<Ticket>(fareMap.get(searchRoute.getStationsList().get(i)).getTicketList());
-								ticketList.add(0,lastTicket);
+								ticketList.add(lastTicket);
 								nextStationInfo.setTicketList(ticketList);
 							}
 							
@@ -144,11 +131,11 @@ public class TicketSplitterTree {
 							searchRoute.addRoute(node.vialine,node.back.sta);
 							node=node.back;
 						}
-						/*for(Station s:searchRoute.getStationsList()){
+						for(Station s:searchRoute.getStationsList()){
 							System.out.print(s.getName()+" ");
 						}
 						System.out.println();
-						*/
+						
 						for(int i=1;i<searchRoute.getStationsList().size();i++){
 							Ticket lastTicket=new FareCalculator().calculate(searchRoute.divideHead(i));
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
@@ -157,7 +144,7 @@ public class TicketSplitterTree {
 								nextStationInfo.setRoute(searchRoute);
 								
 								List<Ticket> ticketList=new ArrayList<Ticket>(fareMap.get(searchRoute.getStationsList().get(i)).getTicketList());
-								ticketList.add(0,lastTicket);
+								ticketList.add(lastTicket);
 								nextStationInfo.setTicketList(ticketList);
 							}
 							
