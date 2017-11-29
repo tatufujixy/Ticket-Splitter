@@ -59,7 +59,7 @@ public class FareCalculator {
 		
 		List<Station> stationsList=r.getStationsList();
 		fare=Database.getSpecificSectionFare(stationsList.get(0),stationsList.get(stationsList.size()-1),r.getDistance());
-		if(fare==0){
+		if(fare!=0){
 			//特定区間運賃
 			fareCategory="特定区間運賃("+stationsList.get(0).getName()+"・"+stationsList.get(stationsList.size()-1).getName()+")";
 		}else if(ri.inYamanoteLine){

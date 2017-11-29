@@ -41,7 +41,7 @@ public class Route {
 		 return new Route(stationList.subList(i,stationList.size()),lineList.subList(i,lineList.size()));
 	}
 	public void join(Route r){
-		stationList.addAll(r.getStationsList());
+		stationList.addAll(r.getStationsList().subList(1,r.getStationsList().size()));
 		lineList.addAll(r.getLinesList());
 		
 		distance=distance.add(r.distance);
