@@ -21,7 +21,7 @@ public class Debug {
 		}
 		*/
 		
-		System.out.println("dijkstraのデバッグ");
+		System.out.println("dijkstraとFareCalculatorのデバッグ");
 		
 		Station start=null;
 		while(start==null){
@@ -41,6 +41,17 @@ public class Debug {
 		for(Station s:route.getStationsList()){
 			System.out.print(s.getName()+" ");
 		}
+		System.out.println("\n");
+
+		Ticket t=new FareCalculator().calculate(route);
+		Route r=t.getRoute();
+		System.out.println(t.getStart()+" -> "+t.getDestination());
+		System.out.println("運賃:"+t.getFare()+"円 ("+t.getFareCategory()+")");
+		System.out.print("経路 : ");
+		for(String str : r.via()){
+			System.out.print(str+"  ");
+		}
+		System.out.println("\n");
 	}
 
 }
