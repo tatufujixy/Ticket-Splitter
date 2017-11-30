@@ -358,6 +358,9 @@ public class Database {
 			case FARE_SPECIFIC_TOKYO:
 				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='東京電車特定区間'";
 				break;
+			case FARE_YAMANOTE:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='山手線'";
+				break;
 			//他の運賃表の場合も追加する！！
 		}
 		//System.out.println(sql);
