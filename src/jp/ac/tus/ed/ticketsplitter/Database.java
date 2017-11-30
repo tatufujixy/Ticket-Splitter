@@ -13,9 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitter;
 import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitterTree;
 
 public class Database {
@@ -355,12 +353,22 @@ public class Database {
 			case FARE_HONSYU_LOCAL:
 				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='本州地方交通線'";
 				break;
+			case FARE_SHIKOKU_TRUNK:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='四国幹線'";
+				break;
+			case FARE_KYUSYU_TRUNK:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='九州幹線'";
+				break;
 			case FARE_SPECIFIC_TOKYO:
 				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='東京電車特定区間'";
 				break;
 			case FARE_YAMANOTE:
 				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='山手線'";
 				break;
+			case FARE_OSAKA_KANJO:
+				sql = "select * from fare where min<=" + bd + " and max>=" + bd + " and area='大阪環状線'";
+				break;
+			
 			//他の運賃表の場合も追加する！！
 		}
 		//System.out.println(sql);
