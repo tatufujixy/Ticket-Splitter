@@ -23,9 +23,7 @@ public class Database {
 	public static final int FARE_HONSYU_TRUNK=3; // 本州幹線
 	public static final int FARE_HONSYU_LOCAL=4; // 本州地方交通線
 	public static final int FARE_SHIKOKU_TRUNK=5; // 四国幹線
-	//public static final int FARE_SHIKOKU_LOCAL=6; // 四国地方交通線
 	public static final int FARE_KYUSYU_TRUNK=7; // 九州幹線
-	//public static final int FARE_KYUSYU_LOCAL=8; // 九州地方交通線
 	
 	//加算
 	public static final int ADDITIONAL_FARE_HOKKAIDO=50;
@@ -114,9 +112,17 @@ public class Database {
 				sta.setName(rs.getString("name"));
 				sta.addNextStationId(line, rs.getInt("prev_station"));
 				sta.addNextStationId(line, rs.getInt("next_station"));
-				sta.setSpecificWardsAndCities(rs.getInt("wards_and_cities"));
+				//sta.setSpecificWardsAndCities(rs.getInt("wards_and_cities"));
 				sta.setIsInYamanoteLine(rs.getBoolean("yamanote"));
 				sta.setInOsakaKanjoLine(rs.getBoolean("osaka_kanjo"));
+				
+				String specificWardsAndCities=rs.getString("wards_and_cities");
+				if(specificWardsAndCities==null){
+				}else if(specificWardsAndCities.equals("東京")){
+					sta.setSpecificWardsAndCities(Station.CITY_TOKYO);
+				}else if(specificWardsAndCities.equals("横浜")){
+					sta.setSpecificWardsAndCities(Station.CITY_YOKOHAMA);
+				}//！！！他の特定都区市内も記述する！！！
 				
 				String specificArea=rs.getString("specific_area");
 				if(specificArea==null){
