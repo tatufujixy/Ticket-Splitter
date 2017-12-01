@@ -263,9 +263,13 @@ public class FareCalculator {
 					break;
 				}
 			}
-			
-			start=Database.getCentralStationOfWardsAndCities(stationsList.get(0).getSpecificWardsAndCities());
-			startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
+			if(start_i==stationsList.size()-1){
+				//経路がすべてエリア内に収まる
+				startAreaPass=destAreaPass=false;
+			}else{
+				start=Database.getCentralStationOfWardsAndCities(stationsList.get(0).getSpecificWardsAndCities());
+				startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
+			}
 		}
 		if(destAreaPass){
 			System.out.println("destAreaPass :"+stationsList.get(stationsList.size()-1).getName());
@@ -279,7 +283,14 @@ public class FareCalculator {
 			dest=Database.getCentralStationOfWardsAndCities(stationsList.get(stationsList.size()-1).getSpecificWardsAndCities());
 			destAreaRoute=TicketSplitter.dijkstra(stationsList.get(dest_i), dest);
 		}
+<<<<<<< HEAD
 		
+=======
+		/*if(start_i>=dest_i){
+			//経路がすべてエリア内に収まる
+			startAreaPass=destAreaPass=false;
+		}*/
+>>>>>>> branch 'master' of https://github.com/tatufujixy/Ticket-Splitter.git
 		
 		if(startAreaPass && destAreaPass){
 			//乗車駅・下車駅の両側が特定都区市内による経路変更の対象
@@ -345,9 +356,13 @@ public class FareCalculator {
 					break;
 				}
 			}
-			
-			start=Database.getCentralStationOfYamanoteLine();
-			startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
+			if(start_i==stationsList.size()-1){
+				//経路がすべてエリア内に収まる
+				startAreaPass=destAreaPass=false;
+			}else{
+				start=Database.getCentralStationOfYamanoteLine();
+				startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
+			}
 		}
 		if(destAreaPass){
 			for(int i=stationsList.size()-2;i>=0;i--){
@@ -358,8 +373,16 @@ public class FareCalculator {
 			}
 			dest=Database.getCentralStationOfYamanoteLine();
 			destAreaRoute=TicketSplitter.dijkstra(stationsList.get(dest_i), dest);
+<<<<<<< HEAD
+=======
 		}
-		
+		/*
+		if(start_i>=dest_i){
+			//経路がすべてエリア内に収まる
+			startAreaPass=destAreaPass=false;
+>>>>>>> branch 'master' of https://github.com/tatufujixy/Ticket-Splitter.git
+		}
+		*/
 		String inYamanote="東京山手線内";
 		if(startAreaPass && destAreaPass){
 			//乗車駅・下車駅の両側が山手内による経路変更の対象

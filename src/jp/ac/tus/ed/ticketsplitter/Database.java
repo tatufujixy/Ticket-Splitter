@@ -283,8 +283,33 @@ public class Database {
 		//引数は、Stationクラスのstatic変数（CITY_エリア名）
 		//特定都区市内の中心駅を返す
 		
+		String areaString=null;
+		switch(area){
+		case Station.CITY_SAPPORO:
+			areaString="札幌";
+			break;
+		case Station.CITY_TOKYO:
+			areaString="東京";
+			break;
+		case Station.CITY_YOKOHAMA:
+			areaString="横浜";
+			break;
+		//ほかの特定都区市内も
+		}
 		
-		return null;
+		String sql="select * from central_station_specific_wards_and_cities where wards_and_cities='"+areaString+"'";
+		Station sta=null;
+		try {
+			ResultSet rs=statement.executeQuery(sql);
+			if(rs.next()){
+				sta=getStation(rs.getInt("id"));
+			}
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		
+		return sta;
 	}
 	public static Station getCentralStationOfYamanoteLine(){
 		//山手線内の中心駅（東京駅）を返す
