@@ -3,13 +3,10 @@ package jp.ac.tus.ed.ticketsplitter.splitters;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 import jp.ac.tus.ed.ticketsplitter.Database;
@@ -21,6 +18,7 @@ import jp.ac.tus.ed.ticketsplitter.Ticket;
 
 public class TicketSplitterTree {
 	
+	static FareCalculator calculator=new FareCalculator();
 	
 	public static List<Ticket> getOptimizedTickets(Station start,Station dest){
 	//start駅からdest駅までの最安値の分割パターンの乗車券リストを返す
@@ -30,8 +28,6 @@ public class TicketSplitterTree {
 	
 	
 	public static List<Ticket> getTicketList(Station start,Station dest){
-		int startid = start.getStationId();
-		
 		List<TreeStaNode> unsettledList=new ArrayList<TreeStaNode>();
 		//未確定リスト
 		
@@ -65,7 +61,6 @@ public class TicketSplitterTree {
 					}
 					
 					
-					int n;
 					LowestFareInformation nextStationInfo=fareMap.get(nextStation);
 					if(nextStationInfo!=null && nextStationInfo.isSettled()){
 						//すでにこの駅が確定リストにあるとき
@@ -115,8 +110,6 @@ public class TicketSplitterTree {
 						
 						
 						for(int i=searchStartIndex;i<searchRoute.getStationsList().size();i++){
-							Ticket lastTicket=new FareCalculator().calculate(searchRoute.divideHead(i));
-							
 							//折り返しの判定
 							Route gRoute=fareMap.get(searchRoute.getStationsList().get(i)).getRoute();//残りのルート
 							if(gRoute.getDistance().compareTo(BigDecimal.ZERO)!=0
@@ -140,6 +133,7 @@ public class TicketSplitterTree {
 								continue;
 							}
 							
+							Ticket lastTicket=calculator.calculate(searchRoute.divideHead(i));
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()){
 								nextStationInfo.setFare(fare);
@@ -165,7 +159,6 @@ public class TicketSplitterTree {
 						fareMap.put(nextStation,nextStationInfo);
 						
 						
-						int searchStartIndex=0;
 						Route searchRoute=new Route(node.sta);
 						while(node.back!=null){//経路をまず求める
 							searchRoute.addRoute(node.vialine,node.back.sta);
@@ -177,8 +170,6 @@ public class TicketSplitterTree {
 						System.out.println();
 						*/
 						for(int i=1;i<searchRoute.getStationsList().size();i++){
-							Ticket lastTicket=new FareCalculator().calculate(searchRoute.divideHead(i));
-							
 							//折り返しの判定
 							Route gRoute=fareMap.get(searchRoute.getStationsList().get(i)).getRoute();//残りのルート
 							if(gRoute.getDistance().compareTo(BigDecimal.ZERO)!=0
@@ -203,6 +194,7 @@ public class TicketSplitterTree {
 							}
 							
 							
+							Ticket lastTicket=calculator.calculate(searchRoute.divideHead(i));
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()){
 								nextStationInfo.setFare(fare);
@@ -248,6 +240,7 @@ public class TicketSplitterTree {
 		}
 		return list.remove(min);
 	}
+	
 	
 }
 

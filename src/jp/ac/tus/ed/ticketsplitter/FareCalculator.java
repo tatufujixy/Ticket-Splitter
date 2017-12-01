@@ -1,6 +1,7 @@
 package jp.ac.tus.ed.ticketsplitter;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,33 @@ public class FareCalculator {
 		
 	}
 	
+	
+	private class ShortestPathKey{
+		private final Station start;
+		private final Station dest;
+		
+		ShortestPathKey(Station start,Station dest){
+			this.start=start;
+			this.dest=dest;
+		}
+		
+		@Override
+		public int hashCode(){
+			return start.hashCode()^(dest.hashCode()<<1);
+		}
+		
+		@Override
+		public boolean equals(Object obj){
+			if(!(obj instanceof ShortestPathKey)){
+				return false;
+			}
+			ShortestPathKey k=(ShortestPathKey)obj;
+			return start.equals(k.start) && dest.equals(k.dest);
+		}
+	}
+	
+	Map<ShortestPathKey,Route> shortestPathMap=Collections.synchronizedMap(new HashMap<ShortestPathKey,Route>());
+	//ダイクストラ法による最短経路を保存するMap
 	
 	public Ticket calculate(Route route){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
@@ -269,7 +297,7 @@ public class FareCalculator {
 				startAreaPass=destAreaPass=false;
 			}else{
 				start=Database.getCentralStationOfWardsAndCities(stationsList.get(0).getSpecificWardsAndCities());
-				startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
+				startAreaRoute=getShortestPath(start,stationsList.get(start_i));
 			}
 		}
 		if(destAreaPass){
@@ -283,7 +311,7 @@ public class FareCalculator {
 				}
 			}
 			dest=Database.getCentralStationOfWardsAndCities(stationsList.get(stationsList.size()-1).getSpecificWardsAndCities());
-			destAreaRoute=TicketSplitter.dijkstra(stationsList.get(dest_i), dest);
+			destAreaRoute=getShortestPath(stationsList.get(dest_i), dest);
 		}
 		/*if(start_i>=dest_i){
 			//経路がすべてエリア内に収まる
@@ -360,7 +388,7 @@ public class FareCalculator {
 				startAreaPass=destAreaPass=false;
 			}else{
 				start=Database.getCentralStationOfYamanoteLine();
-				startAreaRoute=TicketSplitter.dijkstra(start,stationsList.get(start_i));
+				startAreaRoute=getShortestPath(start,stationsList.get(start_i));
 			}
 		}
 		if(destAreaPass){
@@ -372,7 +400,7 @@ public class FareCalculator {
 				}
 			}
 			dest=Database.getCentralStationOfYamanoteLine();
-			destAreaRoute=TicketSplitter.dijkstra(stationsList.get(dest_i), dest);
+			destAreaRoute=getShortestPath(stationsList.get(dest_i), dest);
 		}
 		/*
 		if(start_i>=dest_i){
@@ -458,6 +486,19 @@ public class FareCalculator {
 		}
 		
 		return false;
+	}
+	
+	
+	private Route getShortestPath(Station start,Station dest){
+		
+		ShortestPathKey key=new ShortestPathKey(start,dest);
+		if(shortestPathMap.containsKey(key)){
+			return shortestPathMap.get(key);
+		}
+		
+		Route r= TicketSplitter.dijkstra(start, dest);
+		shortestPathMap.put(key,r);
+		return r;
 	}
 	
 }
