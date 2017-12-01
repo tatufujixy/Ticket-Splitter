@@ -37,4 +37,13 @@ public class Line { // JR各路線データのクラス
 	//地域の値を返す
 		return area;
 	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if(!(obj instanceof Line)){
+			return false;
+		}
+		
+		return id==((Line)obj).id;
+	}
 }
