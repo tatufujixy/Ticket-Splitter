@@ -44,12 +44,12 @@ public class FareCalculator {
 	
 	public Ticket calculate(Route route){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
-		System.out.print("calculate : ");
+		/*System.out.print("calculate : ");
 		for(Station s:route.getStationsList()){
 			System.out.print(s.getName()+" ");
 		}
 		System.out.println();
-		
+		*/
 		
 		FareCalculationRoute r=getFareCalculationRoute(route);
 		
@@ -133,7 +133,7 @@ public class FareCalculator {
 					fare=Database.getFare(Database.FARE_HONSYU_LOCAL,r.getDistance());
 					fareCategory="本州地方交通線(幹線含む)";
 				}else{
-					fare=Database.getFare(Database.FARE_HONSYU_TRUNK,ri.areaDistance.get(Line.AREA_HOKKAIDO));
+					fare=Database.getFare(Database.FARE_HONSYU_TRUNK,ri.areaDistance.get(Line.AREA_HONSYU));
 					fareCategory="本州幹線";
 				}
 			}else{
