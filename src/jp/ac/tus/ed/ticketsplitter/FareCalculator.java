@@ -44,12 +44,12 @@ public class FareCalculator {
 	
 	public Ticket calculate(Route route){
 	//rの経路を1枚のきっぷで買うときの運賃を返す
-		/*System.out.print("calculate : ");
+		System.out.print("calculate : ");
 		for(Station s:route.getStationsList()){
 			System.out.print(s.getName()+" ");
 		}
 		System.out.println();
-		*/
+		
 		
 		FareCalculationRoute r=getFareCalculationRoute(route);
 		
@@ -133,7 +133,7 @@ public class FareCalculator {
 					fare=Database.getFare(Database.FARE_HONSYU_LOCAL,r.getDistance());
 					fareCategory="本州地方交通線(幹線含む)";
 				}else{
-					fare=Database.getFare(Database.FARE_HONSYU_TRUNK,ri.areaDistance.get(Line.AREA_HONSYU));
+					fare=Database.getFare(Database.FARE_HONSYU_TRUNK,ri.areaDistance.get(Line.AREA_HOKKAIDO));
 					fareCategory="本州幹線";
 				}
 			}else{
@@ -251,16 +251,15 @@ public class FareCalculator {
 		
 		
 		//エリアの	出口駅・入口駅を求める
-		int start_i=0,dest_i=stationsList.size()-1;//出口駅・入口駅のインデックス
+		int start_i=0,dest_i=0;//出口駅・入口駅のインデックス
 		Station start = null,dest=null;//乗下車駅のエリアの中心駅
 		Route startAreaRoute=null,destAreaRoute=null;//中心駅から出入り口駅までのルート
 		if(startAreaPass){
 			System.out.println("startAreaPass :"+stationsList.get(0).getName());
 			int area=stationsList.get(0).getSpecificWardsAndCities();
 			for(int i=1;i<stationsList.size();i++){
-				if(stationsList.get(i).getSpecificWardsAndCities()==area){
-					start_i=i;
-				}else{
+				if(stationsList.get(i).getSpecificWardsAndCities()!=area){
+					start_i=i-1;
 					break;
 				}
 			}
@@ -272,19 +271,15 @@ public class FareCalculator {
 			System.out.println("destAreaPass :"+stationsList.get(stationsList.size()-1).getName());
 			int area=stationsList.get(stationsList.size()-1).getSpecificWardsAndCities();
 			for(int i=stationsList.size()-2;i>=0;i--){
-				if(stationsList.get(i).getSpecificWardsAndCities()==area){
-					dest_i=i;
-				}else{
+				if(stationsList.get(i).getSpecificWardsAndCities()!=area){
+					dest_i=i+1;
 					break;
 				}
 			}
 			dest=Database.getCentralStationOfWardsAndCities(stationsList.get(stationsList.size()-1).getSpecificWardsAndCities());
 			destAreaRoute=TicketSplitter.dijkstra(stationsList.get(dest_i), dest);
 		}
-		if(start_i>=dest_i){
-			//経路がすべてエリア内に収まる
-			startAreaPass=destAreaPass=false;
-		}
+		
 		
 		if(startAreaPass && destAreaPass){
 			//乗車駅・下車駅の両側が特定都区市内による経路変更の対象
@@ -338,16 +333,15 @@ public class FareCalculator {
 		
 		//エリアの	出口駅・入口駅を求める
 		start_i=0;
-		dest_i=stationsList.size()-1;//出口駅・入口駅のインデックス
+		dest_i=0;//出口駅・入口駅のインデックス
 		start = null;
 		dest=null;//乗下車駅のエリアの中心駅
 		startAreaRoute=null;
 		destAreaRoute=null;//中心駅から出入り口駅までのルート
 		if(startAreaPass){
 			for(int i=1;i<stationsList.size();i++){
-				if(stationsList.get(i).isInYamanoteLine()){
-					start_i=i;
-				}else{
+				if(!stationsList.get(i).isInYamanoteLine()){
+					start_i=i-1;
 					break;
 				}
 			}
@@ -358,18 +352,12 @@ public class FareCalculator {
 		if(destAreaPass){
 			for(int i=stationsList.size()-2;i>=0;i--){
 				if(stationsList.get(i).isInYamanoteLine()){
-					dest_i=i;
-				}else{
+					dest_i=i+1;
 					break;
 				}
 			}
 			dest=Database.getCentralStationOfYamanoteLine();
 			destAreaRoute=TicketSplitter.dijkstra(stationsList.get(dest_i), dest);
-		}
-		
-		if(start_i>=dest_i){
-			//経路がすべてエリア内に収まる
-			startAreaPass=destAreaPass=false;
 		}
 		
 		String inYamanote="東京山手線内";

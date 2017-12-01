@@ -49,8 +49,8 @@ public class FareWeightGraphCreator {
 					Route dijkstraroute = TicketSplitter.dijkstra(start, dest);
 					int fare = new FareCalculator().calculate(dijkstraroute).getFare();
 					try{
-						ResultSet rs1 = statement.executeQuery("select * from station where name = " + start);
-						ResultSet rs2 = statement.executeQuery("select * from station where name = " + dest);
+						ResultSet rs1 = statement.executeQuery("select id from station where name = " + start);
+						ResultSet rs2 = statement.executeQuery("select id from station where name = " + dest);
 						giveData(rs1.getInt("id"), rs2.getInt("id"), fare);
 					}catch(SQLException e){
 						e.printStackTrace();
@@ -91,7 +91,7 @@ public class FareWeightGraphCreator {
 	}
 	
 	// mainクラス
-	public static void main(String[] args){
+	public static void main(){
 		// TODO 自動生成されたメソッド・スタブ
 		
 		createDatabase();
