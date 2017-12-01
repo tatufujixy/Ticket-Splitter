@@ -313,7 +313,7 @@ class LowestFareInformation{
 		isSettled=b;
 	}
 	boolean isSettled(){
-		return true;
+		return isSettled;
 	}
 	
 	void setFare(int i){
