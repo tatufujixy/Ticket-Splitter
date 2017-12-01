@@ -73,6 +73,33 @@ public class TicketSplitter {
 		//未確定リストから、距離の最低のもの(つまり最初のもの)を確定済みリストに移動、その隣の駅を取り出す
 		//取り出した駅(unsettled.get(0))が確定済みリストにあれば無視、未確定リストにあれば、距離を計算しなおし、短ければ距離・直前の駅を更新
 		processingStaNode = unsettled.remove(0);
+	
+		if(processingStaNode.getSta().getStationId() == startid){
+			
+			StaNode pointer = processingStaNode;
+			List<Line> linelist = new ArrayList<Line>();
+			List<Station> stalist = new ArrayList<Station>();
+			
+			if(start == dest){
+				stalist.add(start);
+				route = new Route(stalist,linelist);
+			}else{
+			while(!(pointer.getback() == null)){
+			linelist.add(pointer.getvialine());
+			stalist.add(pointer.getSta());
+			pointer = pointer.getback();
+			}
+			stalist.add(pointer.getSta());
+			}
+			
+			route = new Route(stalist,linelist);	
+			
+			endprocess = false;
+			
+		}
+		
+		
+		
 		committed.add(processingStaNode);
 		//処理する駅を取り出す
 		processingSta = processingStaNode.getSta();
@@ -104,26 +131,6 @@ public class TicketSplitter {
 				//新しく作ったStaNodeがstart、未確定内、確定内にあるか確認。
 				if(!(committed.indexOf(newnode)==-1)){
 					//最短経路が確定しているリスト内にあったならばこのノードは破棄。なにもしない。
-				}else if(newstation.getStationId() == startid){
-					//start stationと一致しているならば処理を終了
-					//求めたい距離はstartのstationに一致したノードを求めたStaNodeに書いてあるdistと、
-					//そこからstartまでの距離をたしたものなので
-					startdest = (absbetween).add(processingStaNode.getdist());
-					//経路はbackがnullになるまでnodeを追えばわかる。未実装
-							
-					StaNode pointer = newnode;
-					List<Line> linelist = new ArrayList<Line>();
-					List<Station> stalist = new ArrayList<Station>();
-					while(!(pointer.getback() == null)){
-					linelist.add(pointer.getvialine());
-					stalist.add(pointer.getSta());
-					pointer = pointer.getback();
-					}
-					stalist.add(pointer.getSta());
-					
-					route = new Route(stalist,linelist);	
-					
-					endprocess = false;
 					
 				}else if(!(unsettled.indexOf(newnode)==-1)){
 					//未確定リストにあったならば距離を確認。更新するか否か
