@@ -65,15 +65,16 @@ public class TicketSplitterTree {
 					if(nextStationInfo!=null && nextStationInfo.isSettled()){
 						//すでにこの駅が確定リストにあるとき
 						TreeStaNode node=new TreeStaNode(nextStation,processing,Database.getLine(lineId));
-						
+						System.out.println("確定済み："+nextStation.getName());
 						//ループでないか確認
 						boolean loop=false;
-						while(node.back!=null){
-							if(node.sta.equals(node.sta)){
+						TreeStaNode tmp=node.back;
+						while(tmp!=null){
+							if(tmp.sta.equals(node.sta)){
 								loop=true;
 								break;
 							}
-							node=node.back;
+							tmp=tmp.back;
 						}
 						if(!loop){
 							//新しく作ったノード
@@ -95,7 +96,13 @@ public class TicketSplitterTree {
 							node=node.back;
 						}
 						
-						int searchStartIndex=0;
+						/*System.out.print("未確定リストにあるとき  searchRoute:");
+						for(Station s:searchRoute.getStationsList()){
+							System.out.print(s.getName()+" ");
+						}
+						System.out.println();*/
+						
+						int searchStartIndex=1;
 						for(int i=1;i<nextStationInfo.getRoute().getStationsList().size();i++){
 							//計算の省略
 							if(nextStationInfo.getRoute().getStationsList().get(i).equals(searchRoute.getStationsList().get(i))
@@ -112,6 +119,7 @@ public class TicketSplitterTree {
 						for(int i=searchStartIndex;i<searchRoute.getStationsList().size();i++){
 							//折り返しの判定
 							Route gRoute=fareMap.get(searchRoute.getStationsList().get(i)).getRoute();//残りのルート
+							//System.out.println("折り返しの判定:"+gRoute.getStationsList().get(1).getName()+" "+searchRoute.getStationsList().get(i-1).getName());
 							if(gRoute.getDistance().compareTo(BigDecimal.ZERO)!=0
 									&& gRoute.getStationsList().get(1).equals(searchRoute.getStationsList().get(i-1))
 									&& gRoute.getLinesList().get(0).equals(searchRoute.getLinesList().get(i-1))){
@@ -132,6 +140,12 @@ public class TicketSplitterTree {
 							if(loop){
 								continue;
 							}
+							
+							System.out.print("last Ticket:");
+							for(Station s:searchRoute.divideHead(i).getStationsList()){
+								System.out.print(s.getName()+" ");
+							}
+							System.out.println();
 							
 							Ticket lastTicket=calculator.calculate(searchRoute.divideHead(i));
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();

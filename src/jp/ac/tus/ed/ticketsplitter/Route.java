@@ -6,8 +6,8 @@ import java.util.List;
 
 public class Route {
 	
-	private List<Station> stationList=new ArrayList<Station>();
-	private List<Line> lineList=new ArrayList<Line>();
+	private List<Station> stationList=new ArrayList<Station>(100);
+	private List<Line> lineList=new ArrayList<Line>(100);
 	private BigDecimal distance=BigDecimal.ZERO;
 	
 	//コンストラクタはTicketSplitter(、FareCalculator)で呼ばれる
@@ -52,12 +52,12 @@ public class Route {
 	
 	
 	public void addRoute(Line line,Station sta){
-		stationList.add(sta);
-		lineList.add(line);
-		
 		BigDecimal between=stationList.get(stationList.size()-1).getDistance(line.getId())
 				.subtract(sta.getDistance(line.getId())).abs();
 		distance=distance.add(between);
+		
+		stationList.add(sta);
+		lineList.add(line);
 	}
 	
 	public List<Station> getStationsList(){

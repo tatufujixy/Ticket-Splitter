@@ -283,7 +283,7 @@ public class FareCalculator {
 		Station start = null,dest=null;//乗下車駅のエリアの中心駅
 		Route startAreaRoute=null,destAreaRoute=null;//中心駅から出入り口駅までのルート
 		if(startAreaPass){
-			System.out.println("startAreaPass :"+stationsList.get(0).getName());
+			//System.out.println("startAreaPass :"+stationsList.get(0).getName());
 			int area=stationsList.get(0).getSpecificWardsAndCities();
 			for(int i=1;i<stationsList.size();i++){
 				if(stationsList.get(i).getSpecificWardsAndCities()==area){
@@ -301,7 +301,7 @@ public class FareCalculator {
 			}
 		}
 		if(destAreaPass){
-			System.out.println("destAreaPass :"+stationsList.get(stationsList.size()-1).getName());
+			//System.out.println("destAreaPass :"+stationsList.get(stationsList.size()-1).getName());
 			int area=stationsList.get(stationsList.size()-1).getSpecificWardsAndCities();
 			for(int i=stationsList.size()-2;i>=0;i--){
 				if(stationsList.get(i).getSpecificWardsAndCities()==area){
@@ -492,11 +492,12 @@ public class FareCalculator {
 	private Route getShortestPath(Station start,Station dest){
 		
 		ShortestPathKey key=new ShortestPathKey(start,dest);
-		if(shortestPathMap.containsKey(key)){
-			return shortestPathMap.get(key);
+		Route r=shortestPathMap.get(key);
+		if(r!=null){
+			return r;
 		}
 		
-		Route r= TicketSplitter.dijkstra(start, dest);
+		r= TicketSplitter.dijkstra(start, dest);
 		shortestPathMap.put(key,r);
 		return r;
 	}
