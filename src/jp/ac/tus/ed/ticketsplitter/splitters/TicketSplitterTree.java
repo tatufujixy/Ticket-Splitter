@@ -66,6 +66,9 @@ public class TicketSplitterTree {
 						//すでにこの駅が確定リストにあるとき
 						TreeStaNode node=new TreeStaNode(nextStation,processing,Database.getLine(lineId));
 						System.out.println("確定済み："+nextStation.getName());
+						
+						//本当にこの場合も枝刈りできない？？？
+						
 						//ループでないか確認
 						boolean loop=false;
 						TreeStaNode tmp=node.back;
@@ -102,8 +105,10 @@ public class TicketSplitterTree {
 						}
 						System.out.println();*/
 						
+						Route lastRoute=new Route(searchRoute.getStationsList().get(0));
 						int searchStartIndex=1;
 						for(int i=1;i<nextStationInfo.getRoute().getStationsList().size();i++){
+							lastRoute.addRoute(searchRoute.getLinesList().get(i-1),searchRoute.getStationsList().get(i));
 							//計算の省略
 							if(nextStationInfo.getRoute().getStationsList().get(i).equals(searchRoute.getStationsList().get(i))
 									&& nextStationInfo.getRoute().getLinesList().get(i-1).equals(searchRoute.getLinesList().get(i-1))){
@@ -115,8 +120,9 @@ public class TicketSplitterTree {
 							
 						}
 						
-						
-						for(int i=searchStartIndex;i<searchRoute.getStationsList().size();i++){
+						for(int i=searchStartIndex+1;i<searchRoute.getStationsList().size();i++){
+							lastRoute.addRoute(searchRoute.getLinesList().get(i-1),searchRoute.getStationsList().get(i));
+							
 							//折り返しの判定
 							Route gRoute=fareMap.get(searchRoute.getStationsList().get(i)).getRoute();//残りのルート
 							//System.out.println("折り返しの判定:"+gRoute.getStationsList().get(1).getName()+" "+searchRoute.getStationsList().get(i-1).getName());
@@ -128,7 +134,7 @@ public class TicketSplitterTree {
 							}
 							
 							//ループの判定
-							Set<Station> lastRouteStation=new HashSet<Station>(searchRoute.getStationsList().subList(0,i));
+							Set<Station> lastRouteStation=new HashSet<Station>(lastRoute.getStationsList());
 							boolean loop=false;
 							for(Station s:gRoute.getStationsList()){
 								if(lastRouteStation.contains(s)){
@@ -142,12 +148,12 @@ public class TicketSplitterTree {
 							}
 							
 							System.out.print("last Ticket:");
-							for(Station s:searchRoute.divideHead(i).getStationsList()){
+							for(Station s:lastRoute.getStationsList()){
 								System.out.print(s.getName()+" ");
 							}
 							System.out.println();
 							
-							Ticket lastTicket=calculator.calculate(searchRoute.divideHead(i));
+							Ticket lastTicket=calculator.calculate(lastRoute);
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()){
 								nextStationInfo.setFare(fare);
@@ -183,7 +189,11 @@ public class TicketSplitterTree {
 						}
 						System.out.println();
 						*/
+						
+						Route lastRoute=new Route(searchRoute.getStationsList().get(0));
 						for(int i=1;i<searchRoute.getStationsList().size();i++){
+							lastRoute.addRoute(searchRoute.getLinesList().get(i-1),searchRoute.getStationsList().get(i));
+							
 							//折り返しの判定
 							Route gRoute=fareMap.get(searchRoute.getStationsList().get(i)).getRoute();//残りのルート
 							if(gRoute.getDistance().compareTo(BigDecimal.ZERO)!=0
@@ -207,8 +217,13 @@ public class TicketSplitterTree {
 								continue;
 							}
 							
+							System.out.print("last Ticket:");
+							for(Station s:lastRoute.getStationsList()){
+								System.out.print(s.getName()+" ");
+							}
+							System.out.println();
 							
-							Ticket lastTicket=calculator.calculate(searchRoute.divideHead(i));
+							Ticket lastTicket=calculator.calculate(lastRoute);
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()){
 								nextStationInfo.setFare(fare);
