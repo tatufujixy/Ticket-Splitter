@@ -67,8 +67,8 @@ public class TicketSplitterTree {
 						TreeStaNode node=new TreeStaNode(nextStation,processing,Database.getLine(lineId));
 						System.out.println("確定済み："+nextStation.getName());
 						
-						//本当にこの場合も枝刈りできない？？？
-						
+						//本当にこの場合も枝刈りできない？？？ -> ほとんどの場合で枝刈りしてよい
+						/*
 						//ループでないか確認
 						boolean loop=false;
 						TreeStaNode tmp=node.back;
@@ -83,7 +83,7 @@ public class TicketSplitterTree {
 							//新しく作ったノード
 							unsettledList.add(node);
 						}
-						
+						*/
 						
 					}else if(nextStationInfo!=null && !nextStationInfo.isSettled()){
 						//この駅が未確定リストにあるとき
@@ -146,16 +146,19 @@ public class TicketSplitterTree {
 							if(loop){
 								continue;
 							}
-							
+							/*
 							System.out.print("last Ticket:");
 							for(Station s:lastRoute.getStationsList()){
 								System.out.print(s.getName()+" ");
 							}
 							System.out.println();
-							
+							*/
 							Ticket lastTicket=calculator.calculate(lastRoute);
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
-							if(fare<nextStationInfo.getFare()){
+							if(fare<nextStationInfo.getFare()
+									|| (fare==nextStationInfo.getFare()
+										&& fareMap.get(searchRoute.getStationsList().get(i)).getTicketList().size()+1
+											< nextStationInfo.getTicketList().size() ) ){
 								nextStationInfo.setFare(fare);
 								nextStationInfo.setRoute(searchRoute);
 								
@@ -184,11 +187,7 @@ public class TicketSplitterTree {
 							searchRoute.addRoute(node.vialine,node.back.sta);
 							node=node.back;
 						}
-						/*for(Station s:searchRoute.getStationsList()){
-							System.out.print(s.getName()+" ");
-						}
-						System.out.println();
-						*/
+						
 						
 						Route lastRoute=new Route(searchRoute.getStationsList().get(0));
 						for(int i=1;i<searchRoute.getStationsList().size();i++){
@@ -217,15 +216,12 @@ public class TicketSplitterTree {
 								continue;
 							}
 							
-							System.out.print("last Ticket:");
-							for(Station s:lastRoute.getStationsList()){
-								System.out.print(s.getName()+" ");
-							}
-							System.out.println();
-							
 							Ticket lastTicket=calculator.calculate(lastRoute);
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
-							if(fare<nextStationInfo.getFare()){
+							if(fare<nextStationInfo.getFare()
+									|| (fare==nextStationInfo.getFare()
+									&& fareMap.get(searchRoute.getStationsList().get(i)).getTicketList().size()+1
+										< nextStationInfo.getTicketList().size() ) ){
 								nextStationInfo.setFare(fare);
 								nextStationInfo.setRoute(searchRoute);
 								
@@ -256,8 +252,6 @@ public class TicketSplitterTree {
 	
 	static TreeStaNode getMin(List<TreeStaNode> list,Map<Station,LowestFareInformation> fareMap){
 		//最小値を取り出して、リストから削除
-		//Comparator<TreeStaNode> com=new ListComparatorfare();
-		
 		int min=0;
 		int minFare=Integer.MAX_VALUE;
 		for(int i=0;i<list.size();i++){
@@ -280,37 +274,13 @@ class TreeStaNode{
 	TreeStaNode back;
 	Line vialine;
 	
-	/*int farefromdest;
-	//dest駅からここまでの最少運賃格納用
-	
-	List<Ticket> ticketList=new ArrayList<Ticket>();
-	//この駅までの分割きっぷのリスト
-	*/
 	//コンストラクタ
 	public TreeStaNode(Station sta,TreeStaNode back,Line vialine/*,int farefromdest,List<Ticket> ticketList*/){
 		this.sta = sta;
-		//this.dist = dist;
 		this.back = back;
 		this.vialine = vialine;
-		//this.farefromdest = farefromdest;
-		//this.ticketList.addAll(ticketList);
 	}
-	//距離を持ってくる関数
-	/*public BigDecimal getdist(){
-		return this.dist;
-	}*/
-	/*public Station getSta(){
-		return this.sta;
-	}
-	public TreeStaNode getback(){
-		return this.back;
-	}
-	public Line getvialine(){
-		return this.vialine;
-	}
-	public int getfare(){
-		return this.farefromdest;
-	}*/
+	
 	@Override
 	public boolean equals(Object o){
 		if(!(o instanceof TreeStaNode)){
@@ -365,20 +335,3 @@ class LowestFareInformation{
 		return ticketList;
 	}
 }
-/*
-//リスト並べ替えのためのクラス
-class ListComparatorfare implements Comparator<TreeStaNode> {
-
-    //比較メソッド（データクラスを比較して-1, 0, 1を返すように記述する）
-    public int compare(TreeStaNode a, TreeStaNode b) {
-        int no1 = a.farefromdest;
-        int no2 = b.farefromdest;
-
-        //こうすると昇順でソートされる
-        //no1>no2 なら正
-        //no1<no2 なら負 no1=no2 なら0が返値になる
-        return no1-no2;
-        
-    }
-
-}*/
