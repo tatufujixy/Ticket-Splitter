@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import jp.ac.tus.ed.ticketsplitter.splitters.OptimizedTickets;
 import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitterTree;
 
 public class Database {
@@ -542,10 +543,26 @@ public class Database {
 			dest=Database.getStation(str);
 		}
 		
-		List<Ticket> list=TicketSplitterTree.getOptimizedTickets(start, dest);
+		OptimizedTickets tickets=TicketSplitterTree.getOptimizedTickets(start, dest);
 		
-		for(Ticket t:list){
-			Route r=t.getRoute();
+		
+		
+		System.out.println("\n-----通常運賃-----");
+		Route r=tickets.getRoute();
+		Ticket singleTicket=new FareCalculator().calculate(r);
+		System.out.println(r.getStationsList().get(0).getName()+" -> "+r.getStationsList().get(r.getStationsList().size()-1).getName());
+		System.out.println("運賃:"+singleTicket.getFare()+"円 ("+singleTicket.getFareCategory()+")");
+		System.out.print("経路 : ");
+		for(String str : r.via()){
+			System.out.print(str+"  ");
+		}
+		
+		System.out.println("\n\n-----分割運賃-----");
+		
+		
+		int sumFare=0;
+		for(Ticket t:tickets.getTicketList()){
+			r=t.getRoute();
 			System.out.println(t.getStart()+" -> "+t.getDestination());
 			System.out.println("運賃:"+t.getFare()+"円 ("+t.getFareCategory()+")");
 			System.out.print("経路 : ");
@@ -553,7 +570,10 @@ public class Database {
 				System.out.print(str+"  ");
 			}
 			System.out.println("\n");
+			sumFare+=t.getFare();
 		}
+		System.out.println("合計"+sumFare+"円");
+		
 		
 	}
 }

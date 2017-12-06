@@ -20,14 +20,14 @@ public class TicketSplitterTree {
 	
 	static FareCalculator calculator=new FareCalculator();
 	
-	public static List<Ticket> getOptimizedTickets(Station start,Station dest){
+	public static OptimizedTickets getOptimizedTickets(Station start,Station dest){
 	//start駅からdest駅までの最安値の分割パターンの乗車券リストを返す
 		return getTicketList(start,dest);
 	}
 	
 	
 	
-	public static List<Ticket> getTicketList(Station start,Station dest){
+	public static OptimizedTickets getTicketList(Station start,Station dest){
 		List<TreeStaNode> unsettledList=new ArrayList<TreeStaNode>();
 		//未確定リスト
 		
@@ -38,6 +38,20 @@ public class TicketSplitterTree {
 		fareMap.put(dest,new LowestFareInformation(dest, 0, new Route(dest),new ArrayList<Ticket>()));
 		
 		while(true){
+			/*
+			System.out.println("\nunsettledList contents");
+			for(TreeStaNode n:unsettledList){
+				int f=fareMap.get(n.sta).getFare();
+				while(n!=null){
+					System.out.print(n.sta.getName()+" ");
+					n=n.back;
+				}
+				
+				System.out.println(f+"円");
+			}
+			System.out.println();
+			*/
+			
 			TreeStaNode processing=getMin(unsettledList,fareMap);
 			Station processingStation=processing.sta;
 			fareMap.get(processingStation).setSettled(true);
@@ -45,7 +59,8 @@ public class TicketSplitterTree {
 			System.out.println("最安値確定:"+processingStation.getName());
 			
 			if(processingStation.equals(start)){
-				return fareMap.get(processingStation).getTicketList();
+				LowestFareInformation lfi=fareMap.get(processingStation);
+				return new OptimizedTickets(lfi.getRoute(),lfi.getTicketList());
 			}
 			
 			for(int lineId:processing.sta.getLineId()){
@@ -138,8 +153,9 @@ public class TicketSplitterTree {
 								continue;
 							}
 							
-							//ループの判定
-							Set<Station> lastRouteStation=new HashSet<Station>(lastRoute.getStationsList());
+							
+							//ループの判定・・・やってもやらなくても実行時間にあんまり差がないかも
+							Set<Station> lastRouteStation=new HashSet<Station>(lastRoute.getStationsList().subList(0,lastRoute.getStationsList().size()-1));
 							boolean loop=false;
 							for(Station s:gRoute.getStationsList()){
 								if(lastRouteStation.contains(s)){
@@ -161,8 +177,8 @@ public class TicketSplitterTree {
 							Ticket lastTicket=calculator.calculate(lastRoute);
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()
-									/*|| (fare==nextStationInfo.getFare()
-										&& nextStationInfo.getRoute().getDistance().compareTo(searchRoute.getDistance())>0 )*/
+									|| (fare==nextStationInfo.getFare()
+											&& searchRoute.getDistance().compareTo(nextStationInfo.getRoute().getDistance())<0)
 									|| (fare==nextStationInfo.getFare()
 										&& fareMap.get(searchRoute.getStationsList().get(i)).getTicketList().size()+1
 											< nextStationInfo.getTicketList().size() ) ){
