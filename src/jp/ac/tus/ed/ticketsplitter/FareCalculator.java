@@ -117,7 +117,7 @@ public class FareCalculator {
 					.add(ri.areaDistance.get(Line.AREA_HONSYU))
 					.add(ri.areaDistance.get(Line.AREA_SHIKOKU))
 					.add(ri.areaDistance.get(Line.AREA_KYUSYU)));
-			fareCategory="複数エリア跨り";
+			fareCategory="本州幹線(複数エリア跨り)";
 			//さらに加算額もfareに追加する
 			if(ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)!=0){
 				fare+=Database.getFare(Database.ADDITIONAL_FARE_HOKKAIDO,ri.areaDistance.get(Line.AREA_HOKKAIDO));
