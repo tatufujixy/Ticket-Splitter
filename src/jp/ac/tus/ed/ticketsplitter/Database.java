@@ -277,22 +277,36 @@ public class Database {
 		//s1とs2の間、距離distanceで特定区間運賃が設定されていればその運賃を返す
 		//設定されていなければ-1を返す
 		
+		String s1Id="";
+		for(int id:s1.getStationIdOfLine()){
+			s1Id+=id+",";
+		}
+		s1Id=s1Id.substring(0,s1Id.length()-1);
+		
+		
+		String s2Id="";
+		for(int id:s2.getStationIdOfLine()){
+			s2Id+=id+",";
+		}
+		s2Id=s2Id.substring(0,s2Id.length()-1);
+		
+		
+		
 		ResultSet rs;
 		String sql="select * from specific_fare "
-				+ "where start_id="+s1.getStationId()+" and dest_id="+s2.getStationId()
-				+" and distance="+distance;
+				+ "where( start_id in ("+s1Id+") and dest_id in ("+s2Id+") or start_id in ("+s2Id+") and dest_id in ("+s1Id+") )";
+		
+		
+		
+		if(s1.getName().equals("横浜")){
+			System.out.print("");
+		}
 		try {
 			rs=statement.executeQuery(sql);
-			if(rs.next()){
+			if(rs.next() && new BigDecimal(rs.getString("distance")).compareTo(distance)==0){
 				return rs.getInt("fare");
 			}
 			
-			sql="select * from specific_fare "
-					+ "where start_id="+s2.getStationId()+" and dest_id="+s1.getStationId()
-					+" and distance="+distance;
-			if(rs.next()){
-				return rs.getInt("fare");
-			}
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
