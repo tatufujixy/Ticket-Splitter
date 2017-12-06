@@ -43,20 +43,12 @@ public class FareWeightGraphCreator {
 	
 		for(int i=0;i<stationList.size();i++){
 			for(int j=0;j<stationList.size();j++){
-				if(i == j){
+				if(i != j){
 					Station start = stationList.get(i);
 					Station dest = stationList.get(j);
 					Route dijkstraroute = TicketSplitter.dijkstra(start, dest);
 					int fare = new FareCalculator().calculate(dijkstraroute).getFare();
-					try{
-						ResultSet rs1 = statement.executeQuery("select id from station where name = " + start);
-						ResultSet rs2 = statement.executeQuery("select id from station where name = " + dest);
-						giveData(rs1.getInt("id"), rs2.getInt("id"), fare);
-					}catch(SQLException e){
-						e.printStackTrace();
-					}
-				}else{
-					return;
+					giveData(start.getStationId(), dest.getStationId(), fare);
 				}
 			}
 		}
