@@ -298,7 +298,7 @@ public class Database {
 		
 		
 		
-		if(s1.getName().equals("横浜")){
+		if(s1.getName().equals("横浜")/* && s2.getName().equals("品川")*/){
 			System.out.print("");
 		}
 		try {

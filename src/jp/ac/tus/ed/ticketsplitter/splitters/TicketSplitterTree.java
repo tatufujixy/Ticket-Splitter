@@ -84,6 +84,11 @@ public class TicketSplitterTree {
 							unsettledList.add(node);
 						}
 						*/
+						/*
+						LowestFareInformation lfi=fareMap.get(processingStation);
+						if(lfi.getFare()<=nextStationInfo.getFare()){
+							unsettledList.add(node);
+						}*/
 						
 					}else if(nextStationInfo!=null && !nextStationInfo.isSettled()){
 						//この駅が未確定リストにあるとき
@@ -156,6 +161,8 @@ public class TicketSplitterTree {
 							Ticket lastTicket=calculator.calculate(lastRoute);
 							int fare=fareMap.get(searchRoute.getStationsList().get(i)).getFare()+lastTicket.getFare();
 							if(fare<nextStationInfo.getFare()
+									/*|| (fare==nextStationInfo.getFare()
+										&& nextStationInfo.getRoute().getDistance().compareTo(searchRoute.getDistance())>0 )*/
 									|| (fare==nextStationInfo.getFare()
 										&& fareMap.get(searchRoute.getStationsList().get(i)).getTicketList().size()+1
 											< nextStationInfo.getTicketList().size() ) ){
