@@ -100,10 +100,10 @@ public class FareCalculator {
 			fareCategory="大阪環状線";
 		}else if(ri.specificArea==Station.SPECIFIC_TOKYO){
 			fare=Database.getFare(Database.FARE_SPECIFIC_TOKYO, r.getDistance());
-			fareCategory="東京特定区間";
+			fareCategory="東京電車特定区間";
 		}else if(ri.specificArea==Station.SPECIFIC_OSAKA){
 			fare=Database.getFare(Database.FARE_SPECIFIC_OSAKA, r.getDistance());
-			fareCategory="大阪特定区間";
+			fareCategory="大阪電車特定区間";
 		}else if(
 				ri.areaDistance.get(Line.AREA_HOKKAIDO).compareTo(BigDecimal.ZERO)
 				+ri.areaDistance.get(Line.AREA_HONSYU).compareTo(BigDecimal.ZERO)
