@@ -277,8 +277,26 @@ public class Database {
 		//s1とs2の間、距離distanceで特定区間運賃が設定されていればその運賃を返す
 		//設定されていなければ-1を返す
 		
-		
-		
+		ResultSet rs;
+		String sql="select * from specific_fare "
+				+ "where start_id="+s1.getStationId()+" and dest_id="+s2.getStationId()
+				+" and distance="+distance;
+		try {
+			rs=statement.executeQuery(sql);
+			if(rs.next()){
+				return rs.getInt("fare");
+			}
+			
+			sql="select * from specific_fare "
+					+ "where start_id="+s2.getStationId()+" and dest_id="+s1.getStationId()
+					+" and distance="+distance;
+			if(rs.next()){
+				return rs.getInt("fare");
+			}
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 		
 		return -1;
 	}
@@ -351,13 +369,84 @@ public class Database {
 		//運賃計算キロがfareCalcKilos,営業キロがoparatingKilos、エリアがarea(Lineクラスのstatic変数AREA_(エリア名))のときの、
 		//幹線と地方交通線を連続して利用するときの特定運賃を返す
 		//当てはまらなければ-1を返す
+		ResultSet rs;
 		
+		String sql="select * from specific_fare_trunk_and_local "
+				+ "where fare_calc_kilos="+fareCalcKilos.setScale(0, BigDecimal.ROUND_UP)
+				+" and operating_kilos="+operatingKilos.setScale(0, BigDecimal.ROUND_UP)
+				+" and area=";
+		
+		switch(area){
+		case Line.AREA_SHIKOKU:
+			sql+="四国";
+			break;
+		case Line.AREA_KYUSYU:
+			sql+="九州";
+			break;
+		}
+		
+		try {
+			rs=statement.executeQuery(sql);
+			if(rs.next()){
+				return rs.getInt("fare");
+			}
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 		return -1;
 	}
 	public static int getLocalSpecificFare(BigDecimal convertedKilos,BigDecimal operatingKilos,int area){
 		//擬制キロがconvertedKilos,営業キロがoparatingKilos、エリアがarea(Lineクラスのstatic変数AREA_(エリア名))のときの、
 		//地方交通線のみ利用するときの特定運賃を返す
 		//当てはまらなければ-1を返す
+		ResultSet rs;
+		
+		String sql="select * from specific_fare_trunk_local_only "
+				+ "where converted_kilos="+convertedKilos.setScale(0, BigDecimal.ROUND_UP)
+				+" and operating_kilos="+operatingKilos.setScale(0, BigDecimal.ROUND_UP)
+				+" and area=";
+		
+		switch(area){
+		case Line.AREA_SHIKOKU:
+			sql+="四国";
+			break;
+		case Line.AREA_KYUSYU:
+			sql+="九州";
+			break;
+		}
+		
+		try {
+			rs=statement.executeQuery(sql);
+			if(rs.next()){
+				return rs.getInt("fare");
+			}
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		
+		sql="select * from specific_fare_trunk_local_only "
+				+ "where converted_kilos="+convertedKilos.setScale(0, BigDecimal.ROUND_UP)
+				+" and area=";
+		
+		switch(area){
+		case Line.AREA_SHIKOKU:
+			sql+="四国";
+			break;
+		case Line.AREA_KYUSYU:
+			sql+="九州";
+			break;
+		}
+		try {
+			rs=statement.executeQuery(sql);
+			if(rs.next()){
+				return rs.getInt("fare");
+			}
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 		
 		return -1;
 	}
