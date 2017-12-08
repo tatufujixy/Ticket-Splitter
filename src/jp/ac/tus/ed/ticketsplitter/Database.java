@@ -217,9 +217,17 @@ public class Database {
 				sta.setName(rs.getString("name"));
 				sta.addNextStationId(line, rs.getInt("prev_station"));
 				sta.addNextStationId(line, rs.getInt("next_station"));
-				sta.setSpecificWardsAndCities(rs.getInt("wards_and_cities"));
+				//sta.setSpecificWardsAndCities(rs.getInt("wards_and_cities"));
 				sta.setIsInYamanoteLine(rs.getBoolean("yamanote"));
 				sta.setInOsakaKanjoLine(rs.getBoolean("osaka_kanjo"));
+				
+				String specificWardsAndCities=rs.getString("wards_and_cities");
+				if(specificWardsAndCities==null){
+				}else if(specificWardsAndCities.equals("東京")){
+					sta.setSpecificWardsAndCities(Station.CITY_TOKYO);
+				}else if(specificWardsAndCities.equals("横浜")){
+					sta.setSpecificWardsAndCities(Station.CITY_YOKOHAMA);
+				}//！！！他の特定都区市内も記述する！！！
 				
 				String specificArea=rs.getString("specific_area");
 				if(specificArea==null){
@@ -542,15 +550,15 @@ public class Database {
 			String str=in.readLine();
 			dest=Database.getStation(str);
 		}
-		
+		long time=System.currentTimeMillis();
 		OptimizedTickets tickets=TicketSplitterTree.getOptimizedTickets(start, dest);
-		
+		time=System.currentTimeMillis()-time;
 		
 		
 		System.out.println("\n-----通常運賃-----");
 		Route r=tickets.getRoute();
 		Ticket singleTicket=new FareCalculator().calculate(r);
-		System.out.println(r.getStationsList().get(0).getName()+" -> "+r.getStationsList().get(r.getStationsList().size()-1).getName());
+		System.out.println(singleTicket.getStart()+" -> "+singleTicket.getDestination());
 		System.out.println("運賃:"+singleTicket.getFare()+"円 ("+singleTicket.getFareCategory()+")");
 		System.out.print("経路 : ");
 		for(String str : r.via()){
@@ -572,7 +580,8 @@ public class Database {
 			System.out.println("\n");
 			sumFare+=t.getFare();
 		}
-		System.out.println("合計"+sumFare+"円");
+		System.out.println("合計"+sumFare+"円\n");
+		System.out.println("getOptimizedTickets実行時間:"+time+"ms");
 		
 		
 	}

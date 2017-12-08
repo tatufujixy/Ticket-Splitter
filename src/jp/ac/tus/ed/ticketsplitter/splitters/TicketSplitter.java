@@ -29,7 +29,7 @@ public class TicketSplitter {
 	
 	public static Route dijkstra(Station start,Station dest){
 		
-		System.out.println("dijkstra:"+start.getName()+"~"+dest.getName());
+		//System.out.println("dijkstra:"+start.getName()+"~"+dest.getName());
 		
 		
 		int startid = start.getStationId();
