@@ -108,7 +108,7 @@ public class TicketSplitterTree {
 						
 						Route lastRoute=new Route(searchRoute.getStationsList().get(0));
 						int searchStartIndex=1;
-						/*for(int i=1;i<nextStationInfo.getRoute().getStationsList().size();i++){
+						for(int i=1;i<nextStationInfo.getRoute().getStationsList().size();i++){
 							lastRoute.addRoute(searchRoute.getLinesList().get(i-1),searchRoute.getStationsList().get(i));
 							//計算の省略
 							if(nextStationInfo.getRoute().getStationsList().get(i).equals(searchRoute.getStationsList().get(i))
@@ -119,9 +119,9 @@ public class TicketSplitterTree {
 								break;
 							}
 							
-						}*/
+						}
 						
-						for(int i=/*searchStartIndex+*/1;i<searchRoute.getStationsList().size();i++){
+						for(int i=searchStartIndex+1;i<searchRoute.getStationsList().size();i++){
 							lastRoute.addRoute(searchRoute.getLinesList().get(i-1),searchRoute.getStationsList().get(i));
 							
 							//折り返しの判定
