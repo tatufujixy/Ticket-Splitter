@@ -49,6 +49,8 @@ public class FareWeightGraphCreator {
 					Route dijkstraroute = TicketSplitter.dijkstra(start, dest);
 					int fare = new FareCalculator().calculate(dijkstraroute).getFare();
 					giveData(start.getStationId(), dest.getStationId(), fare);
+				}else{
+					
 				}
 			}
 		}
@@ -87,29 +89,7 @@ public class FareWeightGraphCreator {
 		// TODO 自動生成されたメソッド・スタブ
 		
 		createDatabase();
-		
-		//BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		
-		/*
-		Station start = null;
-		while(start==null){
-			System.out.println("乗車駅を入力:");
-			String str = in.readLine();
-			start = Database.getStation(str);
-		}
-		
-		Station dest = null;
-		while(dest==null){
-			System.out.println("降車駅を入力:");
-			String str = in.readLine();
-			dest = Database.getStation(str);
-		}
-		*/
-		
-		// List<Fare> list = (切符1枚で買った場合の値段を出すプログラミング名);
-		
-		
-		
+
 	}
 
 }
