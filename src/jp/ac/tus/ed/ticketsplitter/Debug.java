@@ -41,7 +41,8 @@ public class Debug {
 		for(Station s:route.getStationsList()){
 			System.out.print(s.getName()+" ");
 		}
-		System.out.println("\n");
+		System.out.println("\n距離="+route.getDistance()+"km\n");
+		
 
 		Ticket t=new FareCalculator().calculate(route);
 		Route r=t.getRoute();
