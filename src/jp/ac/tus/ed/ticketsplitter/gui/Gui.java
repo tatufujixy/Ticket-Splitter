@@ -99,7 +99,7 @@ import jp.ac.tus.ed.ticketsplitter.splitters.TicketSplitterTree;
 			 // frame.
 			  setBounds(200, 200, 600, 800);
 
-			    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			  
 
 			    JPanel p = new JPanel();
 			    JTextArea area1 = new JTextArea(47,52);
